@@ -17,7 +17,7 @@ state = [[[[[],[],[]],[[],[],[]],[[],[],[]]], # first slice of first cube
             [[[],[],[]],[[],[],[]],[[],[],[]]],
             [[[],[],[]],[[],[],[]],[[],[],[]]]]] # third cube
 
-state = [[[[[0] for _ in range(3)] for _ in range(3)] for _ in range(3)] for _ in range(3)]
+state = [[[[[0] for i in range(3)] for j in range(3)] for k in range(3)] for l in range(3)]
 print(state)
 
 def get_numerical_input():
@@ -31,6 +31,10 @@ def update_state(state, choice):
     line_number = choice%3 # outputs where on the line it is
 
     coord = []
-
+    for cube in state:
+        for slice in cube:
+            for row in slice:
+                for line in row:
+                    row
 
 
