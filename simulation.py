@@ -34,7 +34,7 @@ def update_state(state, choice):
     slice_number = (choice%27)//9 #outputs the slice within the cube (the z coordinate)
     row_number = (choice%9)//3 # outputs the row within the slice (the y coordinate)
     line_number = choice%3 # outputs where on the line it is
-    xs.append()
+    xs.append(cube_number, )
     coord = []
     for cube in state:
         for slice in cube:
