@@ -18,7 +18,12 @@ state = [[[[[],[],[]],[[],[],[]],[[],[],[]]], # first slice of first cube
             [[[],[],[]],[[],[],[]],[[],[],[]]]]] # third cube
 
 state = [[[[[0] for i in range(3)] for j in range(3)] for k in range(3)] for l in range(3)]
+
+
 print(state)
+
+xs = []
+os = []
 
 def get_numerical_input():
     choice = int(input("What move do you want to make? There are 81 possible squares that you can move, so answer with a number from 0-80"))
@@ -29,7 +34,7 @@ def update_state(state, choice):
     slice_number = (choice%27)//9 #outputs the slice within the cube (the z coordinate)
     row_number = (choice%9)//3 # outputs the row within the slice (the y coordinate)
     line_number = choice%3 # outputs where on the line it is
-
+    xs.append()
     coord = []
     for cube in state:
         for slice in cube:
