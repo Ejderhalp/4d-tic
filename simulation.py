@@ -48,19 +48,39 @@ def add_computer(os):
             break
 
 def check_win(xs,os):
+    valid = True
+    x_won = True
+    o_won = True
     for coord in [0,1,2,3]: #gonna check each of x, y, z, w to see if there's a constant or moving line in that dimension.
-        invalid = False
         that_direction =[]
         for i in xs:
             that_direction.append(i[coord])
-        
+        for j in that_direction:
+            if not that_direction.count(j)==3 and not [0,1,2] in that_direction:
+                valid = False
+                x_won=False
+
+        that_direction =[]
+        for i in os:
+            that_direction.append(i[coord])
+        for j in that_direction:
+            if not that_direction.count(j)==3 and not [0,1,2] in that_direction:
+                valid = False
+                o_won = False
+
+    return valid,x_won, o_won
 
 
 while True:
     update_xs(get_numerical_input())
     add_computer(os)
     print(xs, os)
-    check_win(xs,os)
+    game_over, x_won, o_won = check_win(xs,os)
     if game_over:
         break
+
+if x_won:
+    print("X WON")
+else:
+    print("O WON")
 
