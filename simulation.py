@@ -53,7 +53,7 @@ def check_win(xs,os):
         that_direction =[]
         for i in xs:
             that_direction.append(i[coord])
-        if 
+        
 
 
 while True:
