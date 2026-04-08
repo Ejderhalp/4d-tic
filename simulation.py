@@ -47,8 +47,15 @@ def add_computer(os):
             return os
             break
 
+def check_win(xs,os):
+    for coord in [0,1,2,3]: #gonna check each of x, y, z, w to see if there's a constant or moving line in that dimension. 
+        for i in xs:
 
-update_xs(get_numerical_input())
-add_computer(os)
-print(xs, os)
+while True:
+    update_xs(get_numerical_input())
+    add_computer(os)
+    print(xs, os)
+    check_win(xs,os)
+    if game_over:
+        break
 
