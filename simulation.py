@@ -3,11 +3,8 @@
 import random
 import numpy as np
 from itertools import combinations
-# Current state of the board is recorded as a 4d array
-# From outside -> in the order of coordinates in the array
-# is w, z, y, x
+import plotly.graph_objects as go
 
-#print(state)
 
 xs = []
 os = []
@@ -52,7 +49,7 @@ def check_win(player_coords):
         win = True
         for dim in range(4): # Check x, y, z, w
             coords_in_dim = sorted([p[dim] for p in combo])
-            # A dimension is valid if all coords are same OR are [0, 1, 2]
+            # dimension valid if all points in same line or 
             if not (coords_in_dim[0] == coords_in_dim[1] == coords_in_dim[2] or
                     coords_in_dim == [0, 1, 2]):
                 win = False
@@ -61,9 +58,9 @@ def check_win(player_coords):
             return True
     return False
 
-import plotly.graph_objects as go
 
-def visualize_board_stacked(xs, os):
+
+def visualize_board_stacked(xs, os): #ai assistance was used with this function
     fig = go.Figure()
 
 
