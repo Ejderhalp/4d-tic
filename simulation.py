@@ -77,7 +77,9 @@ while True:
     add_computer(os)
     print(xs)
     #print(xs, os)
-    game_over, x_won, o_won = check_win(xs,os)
+    x_won = check_win(xs)
+    o_won = check_win(os)
+    game_over = x_won and o_won
     if game_over:
         break
 
