@@ -74,7 +74,7 @@ def check_win(player_coords):
 
 while True:
     update_xs(get_numerical_input())
-    add_computer(os)
+    add_computer(xs, os)
     print(xs)
     #print(xs, os)
     x_won = check_win(xs)
