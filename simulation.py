@@ -31,12 +31,12 @@ def get_numerical_input():
     choice = int(input("What move do you want to make? There are 81 possible squares that you can move, so answer with a number from 0-80"))
     return choice
 
-def update_xs(choice, xs):
+def update_xs(choice):
     cube_number = choice//27 #outputs 0, 1 or 2 (the w coordinate)
     slice_number = (choice%27)//9 #outputs the slice within the cube (the z coordinate)
     row_number = (choice%9)//3 # outputs the row within the slice (the y coordinate)
     line_number = choice%3 # outputs where on the line it is
-    xs.append((cube_number, slice_number, row_number, line_number ))
+    xs.append([cube_number, slice_number, row_number, line_number])
 
 
 def add_computer(os):
