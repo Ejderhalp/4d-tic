@@ -6,22 +6,6 @@ import numpy as np
 # From outside -> in the order of coordinates in the array
 # is w, z, y, x
 
-state = [[[[[],[],[]],[[],[],[]],[[],[],[]]], # first slice of first cube
-          [[[],[],[]],[[],[],[]],[[],[],[]]],
-          [[[],[],[]],[[],[],[]],[[],[],[]]]], # first cube
-
-          [[[[],[],[]],[[],[],[]],[[],[],[]]],
-           [[[],[],[]],[[],[],[]],[[],[],[]]],
-           [[[],[],[]],[[],[],[]],[[],[],[]]]], # second cube
-
-           [[[[],[],[]],[[],[],[]],[[],[],[]]],
-            [[[],[],[]],[[],[],[]],[[],[],[]]],
-            [[[],[],[]],[[],[],[]],[[],[],[]]]]] # third cube
-
-#state = [[[[[0] for i in range(3)] for j in range(3)] for k in range(3)] for l in range(3)]
-
-
-
 #print(state)
 
 xs = []
@@ -75,11 +59,11 @@ def check_win(player_coords):
 while True:
     update_xs(get_numerical_input())
     add_computer(xs, os)
-    print(xs)
+    print(xs, os)
     #print(xs, os)
     x_won = check_win(xs)
     o_won = check_win(os)
-    game_over = x_won and o_won
+    game_over = x_won or o_won
     if game_over:
         break
 
