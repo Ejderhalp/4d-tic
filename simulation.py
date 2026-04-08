@@ -14,7 +14,7 @@ os = []
 past_choices =[]
 def get_numerical_input():
     while True:
-        choice = int(input("What move do you want to make? There are 81 possible squares that you can move, so answer with a number from 0-80"))
+        choice = int(input("What move do you want to make? "))
         if choice in past_choices:
             print("No doubling up guesses!")
         else:
@@ -62,6 +62,7 @@ def check_win(player_coords):
     return False
 
 def main():
+    print("There are 81 possible squares that you can move. Please input your guesses as an integer from 0-80")
     while True:
         update_xs(get_numerical_input())
         if check_win(xs):
