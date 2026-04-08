@@ -154,15 +154,15 @@ def main():
         update_xs(get_numerical_input())
         if check_win(xs):
             print("X WON!")
-            #visualize_board_stacked(xs,os)
+            visualize_board_stacked(xs,os)
             break
         add_computer(xs, os)
         #print(xs, os) #DEBUG
         if check_win(os):
             print("O WON!")
-            #visualize_board_stacked(xs,os)
+            visualize_board_stacked(xs,os)
             break
-        #visualize_board_stacked(xs,os)
+        visualize_board_stacked(xs,os)
 
 if __name__ == "__main__":
     main()
