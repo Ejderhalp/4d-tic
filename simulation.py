@@ -49,7 +49,7 @@ def check_win(player_coords):
         win = True
         for dim in range(4): # Check x, y, z, w
             coords_in_dim = sorted([p[dim] for p in combo])
-            # dimension valid if all points in same line or 
+            # dimension valid if all points in same line or they cover all three lines
             if not (coords_in_dim[0] == coords_in_dim[1] == coords_in_dim[2] or
                     coords_in_dim == [0, 1, 2]):
                 win = False
