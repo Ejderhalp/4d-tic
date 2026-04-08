@@ -39,37 +39,38 @@ def update_xs(choice):
     xs.append([cube_number, slice_number, row_number, line_number])
 
 
-def add_computer(os):
-    while True:
-        coord = [random.choice((0,1,2,3)) for i in range(4)]
-        if coord not in xs and coord not in os:
-            os.append(coord)
-            return os
-            break
+def add_computer(xs, os):
+    available = []
+    for w in range(3):
+        for z in range(3):
+            for y in range(3):
+                for x in range(3):
+                    if [w, z, y, x] not in xs and [w, z, y, x] not in os:
+                        available.append([w, z, y, x])
 
-def check_win(xs,os):
-    valid = True
-    x_won = True
-    o_won = True
-    for coord in [0,1,2,3]: #gonna check each of x, y, z, w to see if there's a constant or moving line in that dimension.
-        that_direction =[]
-        for i in xs:
-            that_direction.append(i[coord])
-        for j in that_direction:
-            if not that_direction.count(j)==3 and not [0,1,2] in that_direction:
-                valid = False
-                x_won=False
+    if available:
+        choice = random.choice(available)
+        os.append(choice)
 
-        that_direction =[]
-        for i in os:
-            that_direction.append(i[coord])
-        for j in that_direction:
-            if not that_direction.count(j)==3 and not [0,1,2] in that_direction:
-                valid = False
-                o_won = False
+def check_win(player_coords):
+    if len(player_coords) < 3:
+        return False
 
-    return valid,x_won, o_won
-
+    # In a 3x3x3x3 game, we check every combination of 3 points
+    # (Note: For performance in larger games, use a different approach)
+    from itertools import combinations
+    for combo in combinations(player_coords, 3):
+        win = True
+        for dim in range(4): # Check x, y, z, w
+            coords_in_dim = sorted([p[dim] for p in combo])
+            # A dimension is valid if all coords are same OR are [0, 1, 2]
+            if not (coords_in_dim[0] == coords_in_dim[1] == coords_in_dim[2] or
+                    coords_in_dim == [0, 1, 2]):
+                win = False
+                break
+        if win:
+            return True
+    return False
 
 while True:
     update_xs(get_numerical_input())
