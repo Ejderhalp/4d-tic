@@ -58,17 +58,13 @@ def check_win(player_coords):
 
 while True:
     update_xs(get_numerical_input())
+    if check_win(xs):
+        print("X WON!")
+        break
     add_computer(xs, os)
     print(xs, os)
-    #print(xs, os)
-    x_won = check_win(xs)
-    o_won = check_win(os)
-    game_over = x_won or o_won
-    if game_over:
+    if check_win(os):
+        print("O WON!")
         break
 
-if x_won:
-    print("X WON")
-else:
-    print("O WON")
 
