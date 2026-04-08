@@ -2,6 +2,7 @@
 ### WELCOME TO 4D TIC TAC TOE ###
 import random
 import numpy as np
+from itertools import combinations
 # Current state of the board is recorded as a 4d array
 # From outside -> in the order of coordinates in the array
 # is w, z, y, x
@@ -10,9 +11,15 @@ import numpy as np
 
 xs = []
 os = []
-
+past_choices =[]
 def get_numerical_input():
-    choice = int(input("What move do you want to make? There are 81 possible squares that you can move, so answer with a number from 0-80"))
+    while True:
+        choice = int(input("What move do you want to make? There are 81 possible squares that you can move, so answer with a number from 0-80"))
+        if choice in past_choices:
+            print("No doubling up guesses!")
+        else:
+            break
+    past_choices.append(choice)
     return choice
 
 def update_xs(choice):
@@ -40,9 +47,7 @@ def check_win(player_coords):
     if len(player_coords) < 3:
         return False
 
-    # In a 3x3x3x3 game, we check every combination of 3 points
-    # (Note: For performance in larger games, use a different approach)
-    from itertools import combinations
+
     for combo in combinations(player_coords, 3):
         win = True
         for dim in range(4): # Check x, y, z, w
@@ -56,15 +61,21 @@ def check_win(player_coords):
             return True
     return False
 
-while True:
-    update_xs(get_numerical_input())
-    if check_win(xs):
-        print("X WON!")
-        break
-    add_computer(xs, os)
-    print(xs, os)
-    if check_win(os):
-        print("O WON!")
-        break
+def main():
+    while True:
+        update_xs(get_numerical_input())
+        if check_win(xs):
+            print("X WON!")
+            break
+        add_computer(xs, os)
+        #print(xs, os) #DEBUG
+        if check_win(os):
+            print("O WON!")
+            break
+
+if __name__ == "__main__":
+    main()
+
+
 
 
