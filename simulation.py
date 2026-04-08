@@ -66,14 +66,10 @@ import plotly.graph_objects as go
 def visualize_board_stacked(xs, os):
     fig = go.Figure()
 
-    # --- 1. SETTING VISUAL CONSTANTS ---
-    # Sizes decreasing with w: [w=0, w=1, w=2]
-    size_map = {0: 30, 1: 20, 2: 10}
 
-    # Opacity decreasing slightly so you can see through outer layers
+    size_map = {0: 30, 1: 20, 2: 10}
     opacity_map = {0: 0.6, 1: 0.8, 2: 1.0}
 
-    # Helper function to generate standardized traces
     def add_player_trace(coords, player_name, color, symbol):
         # We need three separate traces per player (one for each W level)
         for w_val in [0, 1, 2]:
