@@ -74,7 +74,8 @@ def check_win(xs,os):
 while True:
     update_xs(get_numerical_input())
     add_computer(os)
-    print(xs, os)
+    print(xs)
+    #print(xs, os)
     game_over, x_won, o_won = check_win(xs,os)
     if game_over:
         break
