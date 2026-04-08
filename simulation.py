@@ -32,12 +32,12 @@ def add_computer(xs, os):
     for w in range(3):
         for z in range(3):
             for y in range(3):
-                for x in range(3):
+                for x in range(3):# checks every possible coordinate and sees if it's occupied
                     if [w, z, y, x] not in xs and [w, z, y, x] not in os:
                         available.append([w, z, y, x])
 
     if available:
-        choice = random.choice(available)
+        choice = random.choice(available) #chooses 
         os.append(choice)
 
 def check_win(player_coords):
