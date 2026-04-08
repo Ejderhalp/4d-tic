@@ -18,11 +18,11 @@ state = [[[[[],[],[]],[[],[],[]],[[],[],[]]], # first slice of first cube
             [[[],[],[]],[[],[],[]],[[],[],[]]],
             [[[],[],[]],[[],[],[]],[[],[],[]]]]] # third cube
 
-state = [[[[[0] for i in range(3)] for j in range(3)] for k in range(3)] for l in range(3)]
+#state = [[[[[0] for i in range(3)] for j in range(3)] for k in range(3)] for l in range(3)]
 
 
 
-print(state)
+#print(state)
 
 xs = []
 os = []
@@ -37,7 +37,7 @@ def update_xs(choice, xs):
     row_number = (choice%9)//3 # outputs the row within the slice (the y coordinate)
     line_number = choice%3 # outputs where on the line it is
     xs.append((cube_number, slice_number, row_number, line_number ))
-    return xs
+
 
 def add_computer(os):
     while True:
@@ -50,5 +50,5 @@ def add_computer(os):
 
 update_xs(get_numerical_input())
 add_computer(os)
-
+print(xs, os)
 
