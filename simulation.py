@@ -157,16 +157,19 @@ def visualize_board_stacked(xs, os):
 def main():
     print("There are 81 possible squares that you can move. Please input your guesses as an integer from 0-80")
     while True:
-        visualize_board_stacked(xs,os)
+
         update_xs(get_numerical_input())
         if check_win(xs):
             print("X WON!")
+            visualize_board_stacked(xs,os)
             break
         add_computer(xs, os)
         #print(xs, os) #DEBUG
         if check_win(os):
             print("O WON!")
+            visualize_board_stacked(xs,os)
             break
+        visualize_board_stacked(xs,os)
 
 if __name__ == "__main__":
     main()
