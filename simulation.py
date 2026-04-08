@@ -48,8 +48,13 @@ def add_computer(os):
             break
 
 def check_win(xs,os):
-    for coord in [0,1,2,3]: #gonna check each of x, y, z, w to see if there's a constant or moving line in that dimension. 
+    for coord in [0,1,2,3]: #gonna check each of x, y, z, w to see if there's a constant or moving line in that dimension.
+        invalid = False
+        that_direction =[]
         for i in xs:
+            that_direction.append(i[coord])
+        if 
+
 
 while True:
     update_xs(get_numerical_input())
