@@ -37,7 +37,7 @@ def add_computer(xs, os):
                         available.append([w, z, y, x])
 
     if available:
-        choice = random.choice(available) #chooses 
+        choice = random.choice(available) #chooses a random coordinate
         os.append(choice)
 
 def check_win(player_coords):
