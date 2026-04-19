@@ -142,8 +142,8 @@ def visualize_board_stacked(xs, os): #ai assistance was used with this function
         legend=dict(traceorder="grouped")
     )
 
-    # Replace fig.show() with this:
-    fig.write_html("game_board.html", auto_open=False)
+    fig.show() #with this:
+    #fig.write_html("game_board.html", auto_open=False)
     # Then, open game_board.html in your browser ONCE.
     # Every time you make a move, just hit 'Refresh' (F5) in that browser tab.
 
