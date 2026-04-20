@@ -27,7 +27,7 @@ def update_xs(choice):
     xs.append([cube_number, slice_number, row_number, line_number])
 
 
-def add_computer(xs, os):
+def add_computer_randomly(xs, os):
     available = []
     for w in range(3):
         for z in range(3):
@@ -39,6 +39,43 @@ def add_computer(xs, os):
     if available:
         choice = random.choice(available) #chooses a random coordinate
         os.append(choice)
+def add_computer_intelligently(xs, os):
+    available = []
+    # 1. Identify all empty spots on the 3x3x3x3 board
+    for w in range(3):
+        for z in range(3):
+            for y in range(3):
+                for x in range(3):
+                    if [w, z, y, x] not in xs and [w, z, y, x] not in os:
+                        available.append([w, z, y, x])
+
+    if not available:
+        return
+
+    # 2. Filter available spots to find those "adjacent" to any player move
+    # Adjacency means |coord1 - coord2| <= 1 for all 4 dimensions
+    adjacent_choices = []
+    for spot in available:
+        for player_move in xs:
+            # Check if all 4 dimensions are within a distance of 1
+            is_adjacent = all(abs(spot[i] - player_move[i]) <= 1 for i in range(4))
+
+            if is_adjacent:
+                adjacent_choices.append(spot)
+                break # Move to next spot once we know this one is adjacent to at least one 'X'
+
+    # 3. Decision Logic:
+    # Pick from adjacent spots if any exist; otherwise, pick from all available
+    if adjacent_choices:
+        choice = random.choice(adjacent_choices)
+    else:
+        choice = random.choice(available)
+
+    os.append(choice)
+    # Also add to past_choices to prevent player from picking it later
+    # Note: You'll need to calculate the integer ID to match your get_numerical_input logic
+    choice_int = (choice[0] * 27) + (choice[1] * 9) + (choice[2] * 3) + choice[3]
+    past_choices.append(choice_int)
 
 def check_win(player_coords):
     if len(player_coords) < 3:
@@ -156,7 +193,8 @@ def main():
             print("X WON!")
             visualize_board_stacked(xs,os)
             break
-        add_computer(xs, os)
+        #add_computer_randomly(xs, os)
+        add_computer_intelligently(xs, os)
         #print(xs, os) #DEBUG
         if check_win(os):
             print("O WON!")
