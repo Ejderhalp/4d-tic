@@ -8,3 +8,7 @@ each of the player's previous moves. If there is a tie, the ai will just choose 
 the 4th dimension is the same as being beside it in the 3rd dimension but the same 4th dimension, since the distance for both would be 1
 
 The game will detect a win when all of a certain player's moves have coordinates that are either 3 of the same or 3 varying by one.
+
+External Support:
+- Writing the function to visualise the board
+- Finding the move that minimizes the distance to the player's previous moves
