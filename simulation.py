@@ -21,6 +21,8 @@ def get_numerical_input():
 def get_coordinate_input():
     while True:
         choice = input("What move do you want to make? (separated by spaces) ").split()
+        for i in range(4):
+            choice[i] = int(choice[i])
         if choice in past_choices:
             print("No doubling up guesses!")
         else:
@@ -195,9 +197,23 @@ def visualize_board_stacked(xs, os): #ai assistance was used with this function
 
 def main():
     print("There are 81 possible squares that you can move. Please input your guesses as an integer from 0-80")
+
+
+    input_type = input("Input as numbers or coordinates? respond with N for numbers and nothing for coordinates")
+
+    numerical = False
+    if input_type.upper() == "N":
+        numerical = True
+
     while True:
 
-        update_xs(get_numerical_input())
+
+        if numerical:
+            update_xs(get_numerical_input())
+        else:
+            xs.append(get_coordinate_input())
+
+
         if check_win(xs):
             print("X WON!")
             visualize_board_stacked(xs,os)
