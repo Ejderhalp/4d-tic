@@ -51,7 +51,6 @@ def add_computer_intelligently(xs, os):
     best_move = None
     min_total_distance = float('inf')
 
-    # 2. Evaluate each available move
     for spot in available:
         current_total_dist = 0
 
