@@ -33,6 +33,7 @@ def add_computer_randomly(xs, os):
     if available:
         choice = random.choice(available) #chooses a random coordinate
         os.append(choice)
+        
 def add_computer_intelligently(xs, os):
     available = []
     # 1. Identify all empty spots on the 3x3x3x3 board
