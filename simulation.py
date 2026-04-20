@@ -18,6 +18,15 @@ def get_numerical_input():
             break
     past_choices.append(choice)
     return choice
+def get_coordinate_input():
+    while True:
+        choice = input("What move do you want to make? (separated by spaces) ").split()
+        if choice in past_choices:
+            print("No doubling up guesses!")
+        else:
+            break
+    past_choices.append(choice)
+    return choice
 
 def update_xs(choice):
     cube_number = choice//27 #outputs 0, 1 or 2 (the w coordinate)
