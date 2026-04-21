@@ -68,16 +68,16 @@ def add_computer_intelligently(xs, os):
             best_move = spot
 
         elif current_total_dist == min_total_distance: #ties
-            if random.random() > 0.5:
+            if random.random() > 0.5: #random 50/50 chance
                 best_move = spot
 
-    # 4. Finalize the move
+    # Finalize the move
     choice = best_move
     os.append(choice)
 
-    # Sync with the numerical input system
-    choice_int = (choice[0] * 27) + (choice[1] * 9) + (choice[2] * 3) + choice[3]
+    choice_int = (choice[0] * 27) + (choice[1] * 9) + (choice[2] * 3) + choice[3] #converting back to single num
     past_choices.append(choice_int)
+
 
 def check_win(player_coords):
     if len(player_coords) < 3:
