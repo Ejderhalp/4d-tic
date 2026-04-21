@@ -1,6 +1,6 @@
 ### 4dtic/simulation_lib.py
 
-past_choices =[]
+past_choices =[] 
 
 def get_numerical_input():
     while True:
