@@ -10,9 +10,9 @@ from simulation_lib import get_numerical_input, get_coordinate_input
 import math
 
 
-xs = []
-os = []
-past_choices =[]
+xs = [] #list of all moves player makes
+os = [] #list of all move computer makes
+past_choices =[] #keeps track of moves 
 
 
 
