@@ -205,11 +205,8 @@ def main():
         print("Please enter 1 or 2")
 
     #choose input type
-    input_type = input("Input as numbers or coordinates? Enter N for numbers or just press enter for Coordinates")
-
-    numerical = False
-    if input_type.upper() == "N":
-        numerical = True
+    input_type = input("Input as numbers or coordinates? Enter N for Numbers or just press enter for Coordinates: ")
+    numerical = input_type.upper() == 
 
     while True:
 
