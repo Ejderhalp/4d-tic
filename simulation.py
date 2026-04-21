@@ -39,7 +39,7 @@ def add_computer_randomly(xs, os):
 
 def add_computer_intelligently(xs, os):
     available = []
-    # 1. Identify all empty spots
+    # Identify all empty spots
     for w in range(3):
         for z in range(3):
             for y in range(3):
@@ -62,12 +62,12 @@ def add_computer_intelligently(xs, os):
             dist_sq = sum((spot[i] - player_move[i])**2 for i in range(4))
             current_total_dist += math.sqrt(dist_sq)
 
-        # 3. Update the "best" move if this one is closer to the human's cluster
+        #update best move
         if current_total_dist < min_total_distance:
             min_total_distance = current_total_dist
             best_move = spot
-        # Optional: Add a tiny bit of randomness for ties
-        elif current_total_dist == min_total_distance:
+
+        elif current_total_dist == min_total_distance: #ties
             if random.random() > 0.5:
                 best_move = spot
 
