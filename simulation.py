@@ -206,28 +206,39 @@ def main():
 
     #choose input type
     input_type = input("Input as numbers or coordinates? Enter N for Numbers or just press enter for Coordinates: ")
-    numerical = input_type.upper() == 
+    numerical = input_type.upper() == "N"
 
     while True:
-
-
+        #player X turn
+        print("\nPlayer X's turn")
         if numerical:
-            update_xs(get_numerical_input())
+            update_xs(get_numerical_input(player = "X"))
         else:
-            xs.append(get_coordinate_input())
-
+            xs.append(get_coordinate_input(player = "X"))
 
         if check_win(xs):
             print("X WON!")
             visualize_board_stacked(xs,os)
             break
-        #add_computer_randomly(xs, os)
-        add_computer_intelligently(xs, os)
-        #print(xs, os) #DEBUG
+        if two_player:
+            print("\nPlayer O's turn")
+            if numerical:
+                update_os(get_numerical_input(player = "O"))
+            else:
+                os.append(get_coordinate_input(player = "O"))
+        else:
+            print("\nComputer thinking...")
+            add_computer_intelligently(xs,os)
+
+
         if check_win(os):
-            print("O WON!")
+            if two_player:
+                print("Player O won!")
+            else:
+                print("The computer won!")
             visualize_board_stacked(xs,os)
             break
+
         visualize_board_stacked(xs,os)
 
 if __name__ == "__main__":
