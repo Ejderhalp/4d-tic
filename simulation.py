@@ -11,7 +11,7 @@ import math
 
 
 xs = [] #player moves
-os = [] #computer/AI moves
+os = [] #computer/other players moves
 past_choices =[] #past moves
 
 
@@ -22,6 +22,14 @@ def update_xs(choice):
     row_number = (choice%9)//3 # outputs the row within the slice (the y coordinate)
     line_number = choice%3 # outputs where on the line it is
     xs.append([cube_number, slice_number, row_number, line_number])
+
+def update_os(choice):
+    cube_number = choice//27
+    slice_number = (choice%27)//9
+    row_number = (choice%9)//3
+    line_number = choice%3
+    os.append([cube_number, slice_number, row_number, line_number])
+
 
 
 def add_computer_randomly(xs, os):
