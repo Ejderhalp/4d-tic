@@ -195,7 +195,7 @@ def visualize_board_stacked(xs, os): #ai assistance was used with this function
 
 
 def main():
-    print("There are 81 possible squares that you can move. Please input your guesses as an integer from 0-80")
+    print("Welcome to 4d Tic Tac Toe. There are 81 possible squares that you can move. Please input your guesses as an integer from 0-80")
 
 
     input_type = input("Input as numbers or coordinates? respond with N for numbers and nothing for coordinates")
