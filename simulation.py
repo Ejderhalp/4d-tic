@@ -31,7 +31,7 @@ def update_os(choice): #same as above but for player O
     os.append([cube_number, slice_number, row_number, line_number])
 
 
-
+'''
 def add_computer_randomly(xs, os): #simple AI
     available = []
     for w in range(3):
@@ -44,7 +44,7 @@ def add_computer_randomly(xs, os): #simple AI
     if available:
         choice = random.choice(available) #chooses a random coordinate
         os.append(choice)
-
+'''
 def add_computer_intelligently(xs, os): #smart AI
     available = []
     # Identify all empty spots
@@ -182,7 +182,7 @@ def main():
             print("X WON!")
             visualize_board_stacked(xs,os)
             break
-        
+
         if two_player:
             print("\nPlayer O's turn")
             if numerical:
