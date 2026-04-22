@@ -59,7 +59,7 @@ def add_computer_intelligently(xs, os): #smart AI
         return #no moves left
 
     best_move = None
-    min_total_distance = float('inf')
+    min_total_distance = float('inf') #start w infinity
 
     for spot in available:
         current_total_dist = 0
