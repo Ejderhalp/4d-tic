@@ -132,9 +132,9 @@ def visualize_board_stacked(xs, os):  # ai assistance was used with this functio
     if xs: add_player_trace(xs, 'Player X', 'red',  'square')
     if os: add_player_trace(os, 'Player O', 'blue', 'circle')
 
-    ghost = [[0, z, y, x] for z in range(3) for y in range(3) for x in range(3)] # draws the faint grid of background 
+    ghost = [[0, z, y, x] for z in range(3) for y in range(3) for x in range(3)] # draws the faint grid of background
     fig.add_trace(go.Scatter3d(
-        x=[c[3] for c in ghost], y=[c[2] for c in ghost], z=[c[1] for c in ghost],
+        x=[c[3] for c in ghost], y=[c[2] for c in ghost], z=[c[1] for c in ghost], #generates grid
         mode='markers',
         marker=dict(size=4, color='rgba(200,200,200,0.3)'),
         showlegend=False, hoverinfo='none'
