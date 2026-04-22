@@ -112,13 +112,13 @@ def visualize_board_stacked(xs, os):  # ai assistance was used with this functio
     SIZE    = {0: 30, 1: 20, 2: 10}
     OPACITY = {0: 0.6, 1: 0.8, 2: 1.0}
 
-    def add_player_trace(coords, player_name, color, symbol): # loops through 
+    def add_player_trace(coords, player_name, color, symbol): # loops through each w value and plots the moves
         outline_color = 'white' if player_name == 'X' else 'black'
         for w in [0, 1, 2]:
             pts = [c for c in coords if c[0] == w]
             if not pts:
                 continue
-            fig.add_trace(go.Scatter3d(
+            fig.add_trace(go.Scatter3d( #adding the size and shape of the moves
                 x=[c[3] for c in pts],
                 y=[c[2] for c in pts],
                 z=[c[1] for c in pts],
