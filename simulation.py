@@ -182,6 +182,7 @@ def main():
             print("X WON!")
             visualize_board_stacked(xs,os)
             break
+        
         if two_player:
             print("\nPlayer O's turn")
             if numerical:
