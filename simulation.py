@@ -23,7 +23,7 @@ def update_xs(choice):
     line_number = choice%3 # outputs where on the line it is
     xs.append([cube_number, slice_number, row_number, line_number])
 
-def update_os(choice):
+def update_os(choice): #same as above but for player O
     cube_number = choice//27
     slice_number = (choice%27)//9
     row_number = (choice%9)//3
@@ -32,7 +32,7 @@ def update_os(choice):
 
 
 
-def add_computer_randomly(xs, os):
+def add_computer_randomly(xs, os): #simple AI
     available = []
     for w in range(3):
         for z in range(3):
@@ -45,7 +45,7 @@ def add_computer_randomly(xs, os):
         choice = random.choice(available) #chooses a random coordinate
         os.append(choice)
 
-def add_computer_intelligently(xs, os):
+def add_computer_intelligently(xs, os): #smart AI
     available = []
     # Identify all empty spots
     for w in range(3):
@@ -56,7 +56,7 @@ def add_computer_intelligently(xs, os):
                         available.append([w, z, y, x])
 
     if not available:
-        return
+        return #no moves left
 
     best_move = None
     min_total_distance = float('inf')
