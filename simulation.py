@@ -61,7 +61,7 @@ def add_computer_intelligently(xs, os): #smart AI
     best_move = None
     min_total_distance = float('inf') #start w infinity
 
-    for spot in available:
+    for spot in available: # for empty spots
         current_total_dist = 0
 
         # Calculate sum of Euclidean distances to all human moves
