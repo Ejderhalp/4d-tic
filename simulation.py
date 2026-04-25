@@ -125,11 +125,11 @@ def visualize_board_stacked(xs, os):  # ai assistance was used with this functio
                 mode='markers',
                 name=f"{player_name} (W={w})",
                 marker=dict(size=SIZE[w], color=color, symbol=symbol,
-                            opacity=OPACITY[w], line=dict(width=1, color=outline_color)),
+                            opacity=OPACITY[w], line=dict(width=3 if symbol == 'x' else 1, color=outline_color)),
                 legendgroup=player_name
             ))
 
-    if xs: add_player_trace(xs, 'Player X', 'red',  'square') # uses our function for the xs
+    if xs: add_player_trace(xs, 'Player X', 'red',  'x') # uses our function for the xs
 
     if os: add_player_trace(os, 'Player O', 'blue', 'circle') # uses our function for the os
 
