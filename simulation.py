@@ -164,7 +164,7 @@ def visualize_board_stacked(xs, os):
             opacity=opacity,
             name=name,
             showlegend=False,
-            flatshading=False # Set to False for a smoother, rounded look
+            flatshading=True # Set to False for a smoother, rounded look
         ))
     # Draw moves
     for move in xs: # Player X = Cubes
