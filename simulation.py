@@ -106,37 +106,28 @@ def check_win(player_coords):
     return False
 
 
-fig = go.Figure()
-
-
-def add_player_trace(coords, player_name, color, symbol):
+def visualize_board_stacked(xs, os):  # ai assistance was used with this function
+    fig = go.Figure()
 
     SIZE    = {0: 30, 1: 20, 2: 10}
     OPACITY = {0: 0.6, 1: 0.8, 2: 1.0}
-    
-    outline_color = 'white' if player_name == 'X' else 'black'
-    for w in sorted([0, 1, 2], reverse=True):
-        pts = [c for c in coords if c[0] == w]
-        if not pts:
-            continue
 
-        fig.add_trace(go.Scatter3d(
-            x=[c[3] for c in pts],
-            y=[c[2] for c in pts],
-            z=[c[1] for c in pts],
-            mode='markers',
-            name=f"{player_name} (W={w})",
-            marker=dict(
-                size=SIZE[w],
-                color=color,
-                symbol=symbol,
-                opacity=OPACITY[w],
-                line=dict(width=2 if w == 2 else 1, color=outline_color) # Thicker line for inner
-            ),
-            legendgroup=player_name
-        ))
-def visualize_board_stacked(xs, os):  # ai assistance was used with this function
-
+    def add_player_trace(coords, player_name, color, symbol): # loops through each w value and plots the moves
+        outline_color = 'white' if player_name == 'X' else 'black'
+        for w in [0, 1, 2]:
+            pts = [c for c in coords if c[0] == w]
+            if not pts:
+                continue
+            fig.add_trace(go.Scatter3d( #adding the size and shape of the moves
+                x=[c[3] for c in pts],
+                y=[c[2] for c in pts],
+                z=[c[1] for c in pts],
+                mode='markers',
+                name=f"{player_name} (W={w})",
+                marker=dict(size=SIZE[w], color=color, symbol=symbol,
+                            opacity=OPACITY[w], line=dict(width=1, color=outline_color)),
+                legendgroup=player_name
+            ))
 
     if xs: add_player_trace(xs, 'Player X', 'red',  'x') # uses our function for the xs
 
