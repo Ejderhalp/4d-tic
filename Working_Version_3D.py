@@ -45,8 +45,9 @@ def add_computer_randomly(xs, os): #simple AI
         choice = random.choice(available) #chooses a random coordinate
         os.append(choice)
 '''
-def add_computer_intelligently(xs, os):
+def add_computer_intelligently(xs, os): #smart AI
     available = []
+    # Identify all empty spots
     for w in range(3):
         for z in range(3):
             for y in range(3):
@@ -55,43 +56,34 @@ def add_computer_intelligently(xs, os):
                         available.append([w, z, y, x])
 
     if not available:
-        return
+        return #no moves left
 
-    # --- PHASE 1: DEFENSIVE BLOCKING ---
-    # Check if Player X is about to win (has 2 in a row with an open 3rd spot)
-    for spot in available:
-        # Temporarily pretend Player X took this spot
-        test_xs = xs + [spot]
-        if check_win(test_xs):
-            # If this spot completes a line for X, the AI must take it!
-            choice = spot
-            os.append(choice)
-            choice_int = (choice[0] * 27) + (choice[1] * 9) + (choice[2] * 3) + choice[3]
-            past_choices.append(choice_int)
-            print(f"AI Blocked Player X at {choice}!")
-            return
-
-    # --- PHASE 2: DISTANCE MINIMIZATION (Your original logic) ---
     best_move = None
-    min_total_distance = float('inf')
+    min_total_distance = float('inf') #start w infinity
 
-    for spot in available:
+    for spot in available: # for empty spots
         current_total_dist = 0
+
+        # Calculate sum of Euclidean distances to all human moves
         for player_move in xs:
-            # 4D Euclidean Distance
+            # Distance formula in 4D: sqrt((w2-w1)^2 + (z2-z1)^2 + (y2-y1)^2 + (x2-x1)^2)
             dist_sq = sum((spot[i] - player_move[i])**2 for i in range(4))
             current_total_dist += math.sqrt(dist_sq)
 
+        #update best move
         if current_total_dist < min_total_distance:
             min_total_distance = current_total_dist
             best_move = spot
-        elif current_total_dist == min_total_distance:
-            if random.random() > 0.5:
+
+        elif current_total_dist == min_total_distance: #ties
+            if random.random() > 0.5: #random 50/50 chance
                 best_move = spot
 
+    # Finalize the move
     choice = best_move
     os.append(choice)
-    choice_int = (choice[0] * 27) + (choice[1] * 9) + (choice[2] * 3) + choice[3]
+
+    choice_int = (choice[0] * 27) + (choice[1] * 9) + (choice[2] * 3) + choice[3] #converting back to single num
     past_choices.append(choice_int)
 
 
