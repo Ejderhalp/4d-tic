@@ -106,7 +106,17 @@ def check_win(player_coords):
     return False
 
 def visualize_board_stacked(xs, os):
-    fig = go.Figure()
+    #fig = go.Figure()
+    fig = go.Figure(data=[go.Surface(
+        lighting=dict(
+            ambient=0.5,   # Background light (0 to 1)
+            diffuse=0.6,   # Light reflection intensity
+            specular=1.0,  # Shiny spot intensity
+            fresnel=0.2,   # Light reflection at edges
+            roughness=0.5  # Surface roughness
+        )
+    )])
+
 
 
     SCALE = {0: 0.4, 1: 0.25, 2: 0.12}
