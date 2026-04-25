@@ -32,6 +32,7 @@ def update_os(choice): #same as above but for player O
 
 def add_computer_intelligently(xs, os):
     available = []
+    # Identify all empty spots
     for w in range(3):
         for z in range(3):
             for y in range(3):
@@ -42,28 +43,32 @@ def add_computer_intelligently(xs, os):
     if not available:
         return
 
-    # --- PHASE 1: DEFENSIVE BLOCKING ---
-    # Check if Player X is about to win (has 2 in a row with an open 3rd spot)
+    # --- PHASE 0: AGGRESSIVE WINNING ---
+    # Check if the AI can finish a line right now
     for spot in available:
-        # Temporarily pretend Player X took this spot
-        test_xs = xs + [spot]
-        if check_win(test_xs):
-            # If this spot completes a line for X, the AI must take it!
-            choice = spot
-            os.append(choice)
-            choice_int = (choice[0] * 27) + (choice[1] * 9) + (choice[2] * 3) + choice[3]
-            past_choices.append(choice_int)
-            print(f"AI Blocked Player X at {choice}!")
+        test_os = os + [spot]
+        if check_win(test_os):
+            final_move(spot, os)
+            print(f"AI took the win at {spot}!")
             return
 
-    # --- PHASE 2: DISTANCE MINIMIZATION (Your original logic) ---
+    # --- PHASE 1: DEFENSIVE BLOCKING ---
+    # Check if Player X has 2-in-a-row and block the 3rd spot
+    for spot in available:
+        test_xs = xs + [spot]
+        if check_win(test_xs):
+            final_move(spot, os)
+            print(f"AI Blocked Player X at {spot}!")
+            return
+
+    # --- PHASE 2: STRATEGIC POSITIONING ---
+    # Original distance minimization logic
     best_move = None
     min_total_distance = float('inf')
 
     for spot in available:
         current_total_dist = 0
         for player_move in xs:
-            # 4D Euclidean Distance
             dist_sq = sum((spot[i] - player_move[i])**2 for i in range(4))
             current_total_dist += math.sqrt(dist_sq)
 
@@ -74,11 +79,13 @@ def add_computer_intelligently(xs, os):
             if random.random() > 0.5:
                 best_move = spot
 
-    choice = best_move
-    os.append(choice)
+    final_move(best_move, os)
+
+def final_move(choice, os_list):
+    """Helper to handle the boilerplate of adding a move."""
+    os_list.append(choice)
     choice_int = (choice[0] * 27) + (choice[1] * 9) + (choice[2] * 3) + choice[3]
     past_choices.append(choice_int)
-
 
 def check_win(player_coords):
     if len(player_coords) < 3:
