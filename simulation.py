@@ -30,21 +30,6 @@ def update_os(choice): #same as above but for player O
     line_number = choice%3
     os.append([cube_number, slice_number, row_number, line_number])
 
-
-'''
-def add_computer_randomly(xs, os): #simple AI
-    available = []
-    for w in range(3):
-        for z in range(3):
-            for y in range(3):
-                for x in range(3):# checks every possible coordinate and sees if it's occupied
-                    if [w, z, y, x] not in xs and [w, z, y, x] not in os:
-                        available.append([w, z, y, x])
-
-    if available:
-        choice = random.choice(available) #chooses a random coordinate
-        os.append(choice)
-'''
 def add_computer_intelligently(xs, os):
     available = []
     for w in range(3):
