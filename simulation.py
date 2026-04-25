@@ -148,7 +148,7 @@ def visualize_board_stacked(xs, os):
 
         # Scaling the sphere (reducing size by 20% as requested earlier)
         # We use size * 0.8 to keep it slightly smaller than the cube's reach
-        r = size
+        r = size * 0.8
 
         # Parametric equations for a sphere
         x = x_center + r * np.sin(theta) * np.cos(phi)
