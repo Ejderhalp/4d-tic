@@ -112,8 +112,6 @@ OPACITY = {0: 0.6, 1: 0.8, 2: 1.0}
 
 def add_player_trace(coords, player_name, color, symbol):
     outline_color = 'white' if player_name == 'X' else 'black'
-    # Sort w descending so smaller markers are drawn last/on top in some engines,
-    # though Plotly handles 3D depth usually quite well.
     for w in sorted([0, 1, 2], reverse=True):
         pts = [c for c in coords if c[0] == w]
         if not pts:
