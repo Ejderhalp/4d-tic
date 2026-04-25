@@ -3,7 +3,6 @@ from dash import dcc, html, Input, Output, State, callback_context
 import plotly.graph_objects as go
 import numpy as np
 
-# Import your existing logic
 from simulation import check_win, add_computer_intelligently
 
 app = dash.Dash(__name__)
