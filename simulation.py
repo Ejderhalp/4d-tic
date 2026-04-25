@@ -127,14 +127,12 @@ def visualize_board_stacked(xs, os):
         ))
 
     def draw_sphere(x, y, z, size, color, opacity, name):
-        # Plotly uses a specific hack for spheres in Scatter3d
-        # by using 'circle' with alphahull or using Surface.
-        # For simplicity and performance, we use a high-resolution 3D marker
+
         fig.add_trace(go.Scatter3d(
             x=[x], y=[y], z=[z],
             mode='markers',
             marker=dict(
-                size=size * 80, # Scatter3d size is handled differently
+                size=size * 80,
                 color=color,
                 opacity=opacity,
                 symbol='circle'
