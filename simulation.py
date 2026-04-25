@@ -106,16 +106,8 @@ def check_win(player_coords):
     return False
 
 def visualize_board_stacked(xs, os):
-    #fig = go.Figure()
-    fig = go.Figure(data=[go.Surface(
-        lighting=dict(
-            ambient=0.5,   # Background light (0 to 1)
-            diffuse=0.6,   # Light reflection intensity
-            specular=1.0,  # Shiny spot intensity
-            fresnel=0.2,   # Light reflection at edges
-            roughness=0.5  # Surface roughness
-        )
-    )])
+    fig = go.Figure()
+
 
 
 
@@ -183,8 +175,8 @@ def visualize_board_stacked(xs, os):
 
     for move in os: # Player O = Spheres
         w, z, y, x_coord = move
-        #draw_circle(x_coord, y, z, SCALE[w], 'blue', OPACITY[w], f"O (W={w})")
-        draw_sphere(x_coord, y, z, SCALE[w], 'blue', OPACITY[w], f"O (W={w})")
+        draw_circle(x_coord, y, z, SCALE[w], 'blue', OPACITY[w], f"O (W={w})")
+        #draw_sphere(x_coord, y, z, SCALE[w], 'blue', OPACITY[w], f"O (W={w})")
 
     # Draw the Background Ghost Grid
     ghost = [[z, y, x] for z in range(3) for y in range(3) for x in range(3)]
