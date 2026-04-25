@@ -132,7 +132,7 @@ def visualize_board_stacked(xs, os):
             x=[x], y=[y], z=[z],
             mode='markers',
             marker=dict(
-                size=size * 80,
+                size=size * 100,
                 color=color,
                 opacity=opacity,
                 symbol='circle'
