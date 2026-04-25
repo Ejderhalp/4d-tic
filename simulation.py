@@ -105,56 +105,73 @@ def check_win(player_coords):
             return True
     return False
 
-
-def visualize_board_stacked(xs, os):  # ai assistance was used with this function
+def visualize_board_stacked(xs, os):
     fig = go.Figure()
 
-    SIZE    = {0: 30, 1: 20, 2: 10}
-    OPACITY = {0: 0.6, 1: 0.8, 2: 1.0}
+    # Size scale for W dimension
+    SCALE = {0: 0.4, 1: 0.25, 2: 0.12}
+    OPACITY = {0: 0.4, 1: 0.7, 2: 1.0}
 
-    def add_player_trace(coords, player_name, color, symbol): # loops through each w value and plots the moves
-        outline_color = 'white' if player_name == 'X' else 'black'
-        for w in [0, 1, 2]:
-            pts = [c for c in coords if c[0] == w]
-            if not pts:
-                continue
-            fig.add_trace(go.Scatter3d( #adding the size and shape of the moves
-                x=[c[3] for c in pts],
-                y=[c[2] for c in pts],
-                z=[c[1] for c in pts],
-                mode='markers',
-                name=f"{player_name} (W={w})",
-                marker=dict(size=SIZE[w], color=color, symbol=symbol,
-                            opacity=OPACITY[w], line=dict(width=1, color=outline_color)),
-                legendgroup=player_name
-            ))
+    def draw_cube(x, y, z, size, color, opacity, name):
+        # Coordinates for the 8 corners of a cube
+        d = size
+        fig.add_trace(go.Mesh3d(
+            x=[x-d, x-d, x+d, x+d, x-d, x-d, x+d, x+d],
+            y=[y-d, y+d, y+d, y-d, y-d, y+d, y+d, y-d],
+            z=[z-d, z-d, z-d, z-d, z+d, z+d, z+d, z+d],
+            i=[7, 0, 0, 0, 4, 4, 6, 6, 4, 0, 3, 2],
+            j=[3, 4, 1, 2, 5, 6, 5, 2, 0, 1, 6, 3],
+            k=[0, 7, 2, 3, 6, 7, 1, 1, 5, 5, 7, 6],
+            color=color, opacity=opacity, name=name,
+            flatshading=True, showlegend=False
+        ))
 
-    if xs: add_player_trace(xs, 'Player X', 'red',  'x') # uses our function for the xs
+    def draw_sphere(x, y, z, size, color, opacity, name):
+        # Plotly uses a specific hack for spheres in Scatter3d
+        # by using 'circle' with alphahull or using Surface.
+        # For simplicity and performance, we use a high-resolution 3D marker
+        fig.add_trace(go.Scatter3d(
+            x=[x], y=[y], z=[z],
+            mode='markers',
+            marker=dict(
+                size=size * 50, # Scatter3d size is handled differently
+                color=color,
+                opacity=opacity,
+                symbol='circle'
+            ),
+            name=name, showlegend=False
+        ))
 
-    if os: add_player_trace(os, 'Player O', 'blue', 'circle') # uses our function for the os
+    # Draw moves
+    for move in xs: # Player X = Cubes
+        w, z, y, x_coord = move
+        draw_cube(x_coord, y, z, SCALE[w], 'red', OPACITY[w], f"X (W={w})")
 
-    ghost = [[0, z, y, x] for z in range(3) for y in range(3) for x in range(3)] # draws the faint grid of background
+    for move in os: # Player O = Spheres
+        w, z, y, x_coord = move
+        draw_sphere(x_coord, y, z, SCALE[w], 'blue', OPACITY[w], f"O (W={w})")
+
+    # Draw the Background Ghost Grid
+    ghost = [[z, y, x] for z in range(3) for y in range(3) for x in range(3)]
     fig.add_trace(go.Scatter3d(
-        x=[c[3] for c in ghost], y=[c[2] for c in ghost], z=[c[1] for c in ghost], #generates grid of ghost squares
+        x=[c[2] for c in ghost], y=[c[1] for c in ghost], z=[c[0] for c in ghost],
         mode='markers',
-        marker=dict(size=4, color='rgba(200,200,200,0.3)'),
+        marker=dict(size=2, color='rgba(150,150,150,0.2)'),
         showlegend=False, hoverinfo='none'
     ))
 
-    fig.update_layout( # styles the figure
-        title="4D Tic-Tac-Toe (W represented by Size/Opacity)",
+    fig.update_layout(
+        title="4D Tic-Tac-Toe: 3D Rendered (W=Size/Opacity)",
         scene=dict(
-            xaxis=dict(title='X', nticks=3, range=[-0.5, 2.5]),
-            yaxis=dict(title='Y', nticks=3, range=[-0.5, 2.5]),
-            zaxis=dict(title='Z', nticks=3, range=[-0.5, 2.5]),
-            aspectmode='cube'
-        ),
-        legend=dict(traceorder="grouped")
+            xaxis=dict(title='X', range=[-0.5, 2.5]),
+            yaxis=dict(title='Y', range=[-0.5, 2.5]),
+            zaxis=dict(title='Z', range=[-0.5, 2.5]),
+            aspectmode='cube',
+            # Adding lighting effects for the 3D meshes
+            camera=dict(eye=dict(x=1.5, y=1.5, z=1.5))
+        )
     )
     fig.show()
-
-
-
 
 def main():
     print("Welcome to 4d Tic Tac Toe. There are 81 possible squares that you can move.")
