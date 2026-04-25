@@ -126,7 +126,7 @@ def visualize_board_stacked(xs, os):
             flatshading=True, showlegend=False
         ))
 
-    def draw_sphere(x, y, z, size, color, opacity, name):
+    def draw_circle(x, y, z, size, color, opacity, name):
 
         fig.add_trace(go.Scatter3d(
             x=[x], y=[y], z=[z],
@@ -139,7 +139,33 @@ def visualize_board_stacked(xs, os):
             ),
             name=name, showlegend=False
         ))
+    def draw_sphere(x_center, y_center, z_center, size, color, opacity, name):
+        # Higher 'resolution' = smoother sphere but slower performance
+        resolution = 10
+        phi = np.linspace(0, 2 * np.pi, resolution)
+        theta = np.linspace(0, np.pi, resolution)
+        phi, theta = np.meshgrid(phi, theta)
 
+        # Scaling the sphere (reducing size by 20% as requested earlier)
+        # We use size * 0.8 to keep it slightly smaller than the cube's reach
+        r = size
+
+        # Parametric equations for a sphere
+        x = x_center + r * np.sin(theta) * np.cos(phi)
+        y = y_center + r * np.sin(theta) * np.sin(phi)
+        z = z_center + r * np.cos(theta)
+
+        fig.add_trace(go.Mesh3d(
+            x=x.flatten(),
+            y=y.flatten(),
+            z=z.flatten(),
+            alphahull=0, # This automatically creates a hull (surface) around the points
+            color=color,
+            opacity=opacity,
+            name=name,
+            showlegend=False,
+            flatshading=False # Set to False for a smoother, rounded look
+        ))
     # Draw moves
     for move in xs: # Player X = Cubes
         w, z, y, x_coord = move
@@ -147,6 +173,7 @@ def visualize_board_stacked(xs, os):
 
     for move in os: # Player O = Spheres
         w, z, y, x_coord = move
+        #draw_circle(x_coord, y, z, SCALE[w], 'blue', OPACITY[w], f"O (W={w})")
         draw_sphere(x_coord, y, z, SCALE[w], 'blue', OPACITY[w], f"O (W={w})")
 
     # Draw the Background Ghost Grid
