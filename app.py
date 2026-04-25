@@ -139,4 +139,4 @@ def redraw_board(data):
     return create_figure(data['xs'], data['os'])
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run(debug=True)
