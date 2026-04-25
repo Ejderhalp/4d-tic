@@ -134,7 +134,7 @@ def visualize_board_stacked(xs, os):
             x=[x], y=[y], z=[z],
             mode='markers',
             marker=dict(
-                size=size * 50, # Scatter3d size is handled differently
+                size=size * 80, # Scatter3d size is handled differently
                 color=color,
                 opacity=opacity,
                 symbol='circle'
