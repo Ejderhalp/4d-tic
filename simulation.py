@@ -108,12 +108,12 @@ def check_win(player_coords):
 def visualize_board_stacked(xs, os):
     fig = go.Figure()
 
-    # Size scale for W dimension
+
     SCALE = {0: 0.4, 1: 0.25, 2: 0.12}
     OPACITY = {0: 0.4, 1: 0.7, 2: 1.0}
 
     def draw_cube(x, y, z, size, color, opacity, name):
-        # Coordinates for the 8 corners of a cube
+
         d = size
         fig.add_trace(go.Mesh3d(
             x=[x-d, x-d, x+d, x+d, x-d, x-d, x+d, x+d],
