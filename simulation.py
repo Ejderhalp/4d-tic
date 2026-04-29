@@ -83,7 +83,7 @@ def build_figure(xs, os):
 
     fig.update_layout(
         paper_bgcolor='#0f0f1a', height=520,
-        title=dict(text="4D Tic-Tac-Toe — size = W dimension", font=dict(color='white')),
+        title=dict(text="4D Tic-Tac-Toe", font=dict(color='white')),
         scene=dict(
             bgcolor='#0f0f1a',
             xaxis=dict(title='X', range=[-0.5,2.5], color='white'),
@@ -125,7 +125,7 @@ S = {'backgroundColor':'#0f0f1a','color':'white','fontFamily':'"Courier New",mon
 app.layout = html.Div(style={**S,'minHeight':'100vh','padding':'20px'}, children=[
 
     html.H1("4D TIC-TAC-TOE", style={'textAlign':'center','letterSpacing':'8px','color':'#e0e0ff'}),
-    html.P("red cubes = X · blue spheres = O · size = W dimension",
+    html.P("red cubes = X · blue spheres = O",
            style={'textAlign':'center','color':'#666','fontSize':'0.8rem'}),
 
     # mode toggle
