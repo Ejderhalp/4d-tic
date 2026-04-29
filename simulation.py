@@ -240,7 +240,7 @@ def handle_move(submit_clicks, reset_clicks, raw, mode, state):
     if move in past or move in xs or move in os:
         return respond('That square is already taken!')
 
-    # apply the move to the correct player's list
+    # apply the move to the correct player's list, updating and storing all moves
     if turn == 'X':
         xs = xs + [move]
     else:
@@ -263,7 +263,7 @@ def handle_move(submit_clicks, reset_clicks, raw, mode, state):
                 state = {'xs':xs,'os':os,'past':past,'turn':'X','over':True}
                 return build_figure(xs, os), 'Computer WINS!', '', '', state, build_move_log(xs, os)
 
-    # switch to the next player's turn
+    # switch to the next player's turn, if in 2 player mode
     next_turn = 'O' if (mode=='2' and turn=='X') else 'X'
     state = {'xs':xs,'os':os,'past':past,'turn':next_turn,'over':False}
     return build_figure(xs, os), '', f"Player {next_turn} — enter your move:", '', state, build_move_log(xs, os)
