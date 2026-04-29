@@ -4,27 +4,37 @@ import numpy as np
 from itertools import combinations
 import plotly.graph_objects as go
 import math
+from dash import Dash, dcc, html, Input, Output, State, callback_context
+import json
 
+# game state
+xs = []           # player X moves
+os = []           # player O / computer moves
+past_choices = [] # all played moves (to prevent duplicates)
 
-xs = [] #player moves
-os = [] #computer/other players moves
-past_choices =[] #past moves
+# core game logic
 
-def get_coordinate_input(player = "X"):
-    while True:
-        choice = list(input(f"Player {player} what move do you want to make? (input 4 numbers)").strip()) #splits users input into a list
-        for i in range(4):
-            choice[i] = int(choice[i]) #convert to integer
-        if choice in past_choices:
-            print("No doubling up guesses!")
-        else:
-            break
+def check_win(player_coords):
+    if len(player_coords) < 3:
+        return False
+    for combo in combinations(player_coords, 3):
+        win = True
+        for dim in range(4):
+            coords_in_dim = [p[dim] for p in combo]
+            if not (coords_in_dim[0] == coords_in_dim[1] == coords_in_dim[2]
+                    or coords_in_dim == [0, 1, 2]
+                    or coords_in_dim == [2, 1, 0]):
+                win = False
+                break
+        if win:
+            return True
+    return False
+
+def final_move(choice, os_list):
+    os_list.append(choice)
     past_choices.append(choice)
-    return choice
 
 def add_computer_intelligently(xs, os):
-
-    #making a list of all empty positions
     available = []
     for w in range(3):
         for z in range(3):
@@ -33,169 +43,365 @@ def add_computer_intelligently(xs, os):
                     if [w, z, y, x] not in xs and [w, z, y, x] not in os:
                         available.append([w, z, y, x])
 
-    # firstly check for a win from the moves that the AI has available right now
+    if not available:
+        return
 
+    # 1. take a winning move if available
     for spot in available:
-        test_os = os + [spot]
-        if check_win(test_os):
+        if check_win(os + [spot]):
             final_move(spot, os)
-            print(f"AI win with {spot}!")
             return
 
-    # if AI can't win in one move, prevent a player win
+    # 2. block the player from winning
     for spot in available:
-        test_xs = xs + [spot]
-        if check_win(test_xs):
+        if check_win(xs + [spot]):
             final_move(spot, os)
-            print(f"AI Blocked Player at {spot}!")
             return
 
-    # if neither of those things happen, then find the move closest to the player's moves on average
+    # 3. pick closest move to player's cluster
     best_move = None
     min_total_distance = float('inf')
-
-    for spot in available: # checks all available spaces
-        current_total_dist = 0
-        for player_move in xs: # for each move that's been played,
-            dist_sq = sum((spot[i] - player_move[i])**2 for i in range(4)) # find the distance of the possible move from the player's move
-            current_total_dist += math.sqrt(dist_sq) #squareroots it to find distance (optional since sqrt is strictly increasing as a function)
-
+    for spot in available:
+        current_total_dist = sum(
+            math.sqrt(sum((spot[i] - pm[i])**2 for i in range(4)))
+            for pm in xs
+        )
         if current_total_dist < min_total_distance:
             min_total_distance = current_total_dist
-            best_move = spot #finds the best move
+            best_move = spot
 
-    final_move(best_move, os)
+    if best_move:
+        final_move(best_move, os)
 
-def final_move(choice, os_list): #commits the AI's move into the list of os
-    os_list.append(choice)
-    past_choices.append(choice)
+# board visualisation
 
-def check_win(player_coords):
-    if len(player_coords) < 3: #no win if less than three moves
-        return False
-
-
-    for combo in combinations(player_coords, 3):
-        win = True
-        for dim in range(4): # Check x, y, z, w
-            coords_in_dim = [p[dim] for p in combo]
-            # dimension valid if all points in same line or they cover all three lines
-            if not (coords_in_dim[0] == coords_in_dim[1] == coords_in_dim[2] or coords_in_dim == [0,1,2] or coords_in_dim == [2,1,0]):
-                win = False
-                break
-        if win:
-            return True
-    return False
-
-def visualize_board_stacked(xs, os): # ai assistance used with this function
-
+def build_figure(xs, os):
     fig = go.Figure()
 
-    SCALE = {0: 0.4, 1: 0.25, 2: 0.12} # setting size values for the 4d slices
-    OPACITY = {0: 0.4, 1: 0.7, 2: 1.0} # setting opacity for each 4d value
+    SCALE   = {0: 0.4,  1: 0.25, 2: 0.12}
+    OPACITY = {0: 0.4,  1: 0.7,  2: 1.0}
 
     def draw_cube(x, y, z, size, color, opacity, name):
-
         d = size
         fig.add_trace(go.Mesh3d(
-            x=[x-d, x-d, x+d, x+d, x-d, x-d, x+d, x+d], #defining 8 corners of the cube
-            y=[y-d, y+d, y+d, y-d, y-d, y+d, y+d, y-d],
-            z=[z-d, z-d, z-d, z-d, z+d, z+d, z+d, z+d],
-            i=[7, 0, 0, 0, 4, 4, 6, 6, 4, 0, 3, 2], # "instructions" for which vertices to connect
-            j=[3, 4, 1, 2, 5, 6, 5, 2, 0, 1, 6, 3],
-            k=[0, 7, 2, 3, 6, 7, 1, 1, 5, 5, 7, 6],
+            x=[x-d,x-d,x+d,x+d,x-d,x-d,x+d,x+d],
+            y=[y-d,y+d,y+d,y-d,y-d,y+d,y+d,y-d],
+            z=[z-d,z-d,z-d,z-d,z+d,z+d,z+d,z+d],
+            i=[7,0,0,0,4,4,6,6,4,0,3,2],
+            j=[3,4,1,2,5,6,5,2,0,1,6,3],
+            k=[0,7,2,3,6,7,1,1,5,5,7,6],
             color=color, opacity=opacity, name=name,
             flatshading=True, showlegend=False
         ))
 
     def draw_sphere(x, y, z, size, color, opacity, name):
-        nb_points = 20
-        phi = np.linspace(0, 2*np.pi, nb_points)
-        theta = np.linspace(0, np.pi, nb_points)
-        phi, theta = np.meshgrid(phi, theta)
-
-        X = x + size * np.sin(theta) * np.cos(phi)
-        Y = y + size * np.sin(theta) * np.sin(phi)
-        Z = z + size * np.cos(theta)
-
+        nb = 20
+        phi, theta = np.meshgrid(
+            np.linspace(0, 2*np.pi, nb),
+            np.linspace(0, np.pi,   nb)
+        )
         fig.add_trace(go.Surface(
-            x=X, y=Y, z=Z,
-            colorscale=[[0, color], [1, color]],
-            showscale=False,
-            opacity=opacity,
-            name=name,
-            hoverinfo='name'
+            x=x + size*np.sin(theta)*np.cos(phi),
+            y=y + size*np.sin(theta)*np.sin(phi),
+            z=z + size*np.cos(theta),
+            colorscale=[[0,color],[1,color]],
+            showscale=False, opacity=opacity,
+            name=name, hoverinfo='name'
         ))
 
-    #draw cubes
     for move in xs:
-        w, z, y, x_coord = move
-        draw_cube(x_coord, y, z, SCALE[w], 'red', OPACITY[w], f"X (W={w})")
+        w, z, y, xc = move
+        draw_cube(xc, y, z, SCALE[w], 'red', OPACITY[w], f"X (W={w})")
 
-    #draw spheres
     for move in os:
-        w, z, y, x_coord = move
-        draw_sphere(x_coord, y, z, SCALE[w], 'blue', OPACITY[w], f"O (W={w})")
+        w, z, y, xc = move
+        draw_sphere(xc, y, z, SCALE[w], 'blue', OPACITY[w], f"O (W={w})")
 
-    #draw the grid
-    ghost = [[z, y, x] for z in range(3) for y in range(3) for x in range(3)] #finds every possible coordinate
+    # ghost grid
+    ghost = [[z,y,x] for z in range(3) for y in range(3) for x in range(3)]
     fig.add_trace(go.Scatter3d(
-        x=[c[2] for c in ghost], y=[c[1] for c in ghost], z=[c[0] for c in ghost],
+        x=[c[2] for c in ghost],
+        y=[c[1] for c in ghost],
+        z=[c[0] for c in ghost],
         mode='markers',
         marker=dict(size=2, color='rgba(150,150,150,0.2)'),
         showlegend=False, hoverinfo='none'
     ))
 
     fig.update_layout(
-        title="4D tic-tac-toe, size represents 4th dimension (coords are [w,z,y,x])",
+        paper_bgcolor='#0f0f1a',
+        plot_bgcolor='#0f0f1a',
+        title=dict(
+            text="4D Tic-Tac-Toe — size = 4th dimension (W)",
+            font=dict(color='white', size=16)
+        ),
         scene=dict(
-            xaxis=dict(title='X', range=[-0.5, 2.5]),
-            yaxis=dict(title='Y', range=[-0.5, 2.5]),
-            zaxis=dict(title='Z', range=[-0.5, 2.5]),
+            bgcolor='#0f0f1a',
+            xaxis=dict(title='X', range=[-0.5,2.5], color='white'),
+            yaxis=dict(title='Y', range=[-0.5,2.5], color='white'),
+            zaxis=dict(title='Z', range=[-0.5,2.5], color='white'),
             aspectmode='cube',
-
-            camera=dict(eye=dict(x=1.5, y=1.5, z=1.5))
-        )
+            camera=dict(eye=dict(x=1.5,y=1.5,z=1.5))
+        ),
+        margin=dict(l=0, r=0, t=40, b=0),
+        height=550,
     )
-    fig.show()
+    return fig
 
-def main():
-    print("Welcome to 4d Tic Tac Toe!")
+# Dash app
 
-    two_player = input("1 or 2 player? Enter 2 for 2p").strip() =="2"
+app = Dash(__name__)
 
-    while True:
+app.layout = html.Div(style={
+    'backgroundColor': '#0f0f1a',
+    'minHeight': '100vh',
+    'fontFamily': '"Courier New", monospace',
+    'color': 'white',
+    'padding': '20px',
+}, children=[
 
-        # order of events in this loop:
-        # first get player's input and check if they won
-        # if no win, get second move (computer/ p2) and check win
-        # if no win, repeat until a win occurs
-        # only visualise the board once both players have played or someone wins
+    # title
+    html.H1("4D TIC-TAC-TOE", style={
+        'textAlign': 'center',
+        'letterSpacing': '8px',
+        'fontSize': '2rem',
+        'color': '#e0e0ff',
+        'marginBottom': '4px',
+    }),
+    html.P("size = W dimension · red cubes = X · blue spheres = O", style={
+        'textAlign': 'center',
+        'color': '#666',
+        'fontSize': '0.8rem',
+        'marginBottom': '20px',
+    }),
 
-        print("\nPlayer X's turn")
-        xs.append(get_coordinate_input(player = "X"))
+    # mode selector
+    html.Div(style={'textAlign':'center','marginBottom':'16px'}, children=[
+        html.Label("Game mode:", style={'marginRight':'10px','color':'#aaa'}),
+        dcc.RadioItems(
+            id='mode-selector',
+            options=[
+                {'label': ' 1 Player (vs Computer)', 'value': '1'},
+                {'label': ' 2 Players',              'value': '2'},
+            ],
+            value='1',
+            inline=True,
+            style={'color':'white'},
+            labelStyle={'marginRight':'20px'},
+        ),
+    ]),
 
-        if check_win(xs):
-            print("X WON!")
-            visualize_board_stacked(xs,os)
-            break
+    # board
+    dcc.Graph(id='board', figure=build_figure([], []),
+              config={'displayModeBar': False}),
 
-        if two_player:
-            print("\nPlayer O's turn")
-            os.append(get_coordinate_input(player = "O"))
-        else:
-            print("\nComputer thinking...")
-            add_computer_intelligently(xs,os)
+    # status message
+    html.Div(id='status', style={
+        'textAlign': 'center',
+        'fontSize': '1.2rem',
+        'fontWeight': 'bold',
+        'color': '#ff6666',
+        'margin': '12px 0',
+        'minHeight': '30px',
+    }),
 
-        if check_win(os):
-            if two_player:
-                print("Player O won!")
-            else:
-                print("The computer won!")
-            visualize_board_stacked(xs,os)
-            break
+    # input row
+    html.Div(style={
+        'display': 'flex',
+        'justifyContent': 'center',
+        'alignItems': 'center',
+        'gap': '12px',
+        'marginBottom': '16px',
+    }, children=[
+        html.Div(id='turn-label', style={
+            'color': '#aaa', 'fontSize': '0.95rem', 'whiteSpace': 'nowrap'
+        }),
+        dcc.Input(
+            id='coord-input',
+            type='text',
+            placeholder='w z y x  (e.g. 0 1 2 1)',
+            debounce=False,
+            style={
+                'backgroundColor': '#1a1a2e',
+                'border': '1px solid #444',
+                'color': 'white',
+                'padding': '10px 14px',
+                'borderRadius': '6px',
+                'fontSize': '1rem',
+                'width': '220px',
+                'outline': 'none',
+            }
+        ),
+        html.Button('SUBMIT', id='submit-btn', n_clicks=0, style={
+            'backgroundColor': '#3333aa',
+            'color': 'white',
+            'border': 'none',
+            'padding': '10px 24px',
+            'borderRadius': '6px',
+            'fontSize': '1rem',
+            'cursor': 'pointer',
+            'letterSpacing': '2px',
+        }),
+        html.Button('NEW GAME', id='reset-btn', n_clicks=0, style={
+            'backgroundColor': '#1a1a1a',
+            'color': '#aaa',
+            'border': '1px solid #444',
+            'padding': '10px 20px',
+            'borderRadius': '6px',
+            'fontSize': '0.9rem',
+            'cursor': 'pointer',
+        }),
+    ]),
 
-        visualize_board_stacked(xs,os)
+    # hidden state stores
+    dcc.Store(id='game-state', data={
+        'xs': [], 'os': [], 'past': [],
+        'turn': 'X',      # whose turn: 'X' or 'O'
+        'over': False,
+    }),
+])
 
-if __name__ == "__main__":
-    main()
+# callback 
+
+@app.callback(
+    Output('board',       'figure'),
+    Output('status',      'children'),
+    Output('turn-label',  'children'),
+    Output('coord-input', 'value'),
+    Output('game-state',  'data'),
+    Input('submit-btn',   'n_clicks'),
+    Input('reset-btn',    'n_clicks'),
+    State('coord-input',  'value'),
+    State('mode-selector','value'),
+    State('game-state',   'data'),
+    prevent_initial_call=True,
+)
+def handle_move(submit_clicks, reset_clicks, raw_input, mode, state):
+    ctx = callback_context
+    triggered = ctx.triggered[0]['prop_id']
+
+    # ── RESET ────────────────────────────────────────────────────────────────
+    if 'reset-btn' in triggered:
+        empty_state = {'xs':[],'os':[],'past':[],'turn':'X','over':False}
+        return build_figure([],[]), '', 'Player X — enter your move:', '', empty_state
+
+    # ── SUBMIT ───────────────────────────────────────────────────────────────
+    if state['over']:
+        return build_figure(state['xs'], state['os']), \
+               'Game over! Press NEW GAME to play again.', '', '', state
+
+    # parse input
+    if not raw_input or not raw_input.strip():
+        return build_figure(state['xs'], state['os']), \
+               '⚠ Please enter 4 numbers (e.g. 0 1 2 1)', \
+               f"Player {state['turn']} — enter your move:", '', state
+
+    try:
+        parts = raw_input.strip().split()
+        if len(parts) != 4:
+            raise ValueError
+        move = [int(p) for p in parts]
+        if not all(0 <= v <= 2 for v in move):
+            raise ValueError
+    except ValueError:
+        return build_figure(state['xs'], state['os']), \
+               '⚠ Invalid input — enter 4 numbers between 0 and 2', \
+               f"Player {state['turn']} — enter your move:", raw_input, state
+
+    # duplicate check
+    if move in state['past'] or move in state['xs'] or move in state['os']:
+        return build_figure(state['xs'], state['os']), \
+               '⚠ That square is already taken!', \
+               f"Player {state['turn']} — enter your move:", '', state
+
+    xs_s   = state['xs']
+    os_s   = state['os']
+    past_s = state['past']
+    turn   = state['turn']
+
+    # ── PLAYER X MOVE ────────────────────────────────────────────────────────
+    if turn == 'X':
+        xs_s = xs_s + [move]
+        past_s = past_s + [move]
+
+        if check_win(xs_s):
+            new_state = {'xs':xs_s,'os':os_s,'past':past_s,'turn':'X','over':True}
+            return build_figure(xs_s, os_s), '🎉 Player X WINS!', '', '', new_state
+
+        # 1-player: computer goes immediately
+        if mode == '1':
+            # run AI on temporary globals
+            temp_xs = list(xs_s)
+            temp_os = list(os_s)
+            temp_past = list(past_s)
+
+            available = []
+            for w in range(3):
+                for z in range(3):
+                    for y in range(3):
+                        for x in range(3):
+                            if [w,z,y,x] not in temp_xs and [w,z,y,x] not in temp_os:
+                                available.append([w,z,y,x])
+
+            ai_move = None
+
+            for spot in available:
+                if check_win(temp_os + [spot]):
+                    ai_move = spot
+                    break
+
+            if not ai_move:
+                for spot in available:
+                    if check_win(temp_xs + [spot]):
+                        ai_move = spot
+                        break
+
+            if not ai_move:
+                best = None
+                min_d = float('inf')
+                for spot in available:
+                    d = sum(math.sqrt(sum((spot[i]-pm[i])**2 for i in range(4))) for pm in temp_xs)
+                    if d < min_d:
+                        min_d = d
+                        best = spot
+                ai_move = best
+
+            if ai_move:
+                temp_os   = temp_os + [ai_move]
+                temp_past = temp_past + [ai_move]
+
+            if check_win(temp_os):
+                new_state = {'xs':temp_xs,'os':temp_os,'past':temp_past,'turn':'X','over':True}
+                return build_figure(temp_xs, temp_os), '🤖 Computer WINS!', '', '', new_state
+
+            new_state = {'xs':temp_xs,'os':temp_os,'past':temp_past,'turn':'X','over':False}
+            return build_figure(temp_xs, temp_os), '', 'Player X — enter your move:', '', new_state
+
+        # 2-player: switch to O
+        new_state = {'xs':xs_s,'os':os_s,'past':past_s,'turn':'O','over':False}
+        return build_figure(xs_s, os_s), '', 'Player O — enter your move:', '', new_state
+
+    # ── PLAYER O MOVE (2-player only) ────────────────────────────────────────
+    else:
+        os_s   = os_s + [move]
+        past_s = past_s + [move]
+
+        if check_win(os_s):
+            new_state = {'xs':xs_s,'os':os_s,'past':past_s,'turn':'X','over':True}
+            return build_figure(xs_s, os_s), '🎉 Player O WINS!', '', '', new_state
+
+        new_state = {'xs':xs_s,'os':os_s,'past':past_s,'turn':'X','over':False}
+        return build_figure(xs_s, os_s), '', 'Player X — enter your move:', '', new_state
+
+
+@app.callback(
+    Output('turn-label', 'children', allow_duplicate=True),
+    Input('mode-selector', 'value'),
+    prevent_initial_call=True,
+)
+def update_label_on_mode_change(mode):
+    return 'Player X — enter your move:'
+
+
+if __name__ == '__main__':
+    app.run(debug=False)
