@@ -34,16 +34,3 @@ The game will detect a win when all of a certain player's moves have coordinates
 
 
 
-
-plan for video:
-Explain 4D tic tac toe the vision (what are the inputs, outputs, and logical components of your algorithm).
-
-Explain a few key sections of your code in detail. These should be critical pieces of your algorithm or things that you found particularly difficult or interesting to implement. If you are working in a group, every group member should explain a key section (we recommend ~1 minute per person).
-
-Highlight the new thing(s) you learned along the way. We are looking to see that you applied at least one concept, tool, or skill beyond what we did in class.
-
-Play the game a few times with some edge cases. Tell them why those edge cases work
-
-If the scope of your project has changed since your FP Status video, discuss those changes and the rationale behind them. Your project needs to have accomplished what you committed to in your last video, or have made course corrections for good reasons. Running out of time is not likely to be a good reason.
-
-Suggest what the next steps would be if you were to keep improving this project.
