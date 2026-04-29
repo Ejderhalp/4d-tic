@@ -83,6 +83,7 @@ def build_figure(xs, os):
 
     fig.update_layout(
         paper_bgcolor='#0f0f1a', height=520,
+        title=dict(text="4D Tic-Tac-Toe — size = W dimension", font=dict(color='white')),
         scene=dict(
             bgcolor='#0f0f1a',
             xaxis=dict(title='X', range=[-0.5,2.5], color='white'),
@@ -107,7 +108,7 @@ def build_move_log(xs, os):
 
     return html.Div(children=[
         # X moves
-        html.P("PLAYER X", style={'color':'#ff6666','letterSpacing':'2px',
+        html.P("PLAYER X", style={'color':'#ff69b4','letterSpacing':'2px',
                                    'fontSize':'0.75rem','marginBottom':'6px','fontWeight':'bold'}),
         *move_rows(xs, '#ff9999', 'X'),
         html.Hr(style={'borderColor':'#333','margin':'10px 0'}),
@@ -123,20 +124,20 @@ S = {'backgroundColor':'#0f0f1a','color':'white','fontFamily':'"Courier New",mon
 
 app.layout = html.Div(style={**S,'minHeight':'100vh','padding':'20px'}, children=[
 
-    html.H1("4D TIC-TAC-TOE", style={'textAlign':'center','letterSpacing':'8px','color':'#e0e0ff'}),
-    html.P("red cubes = X · blue spheres = O",
+    html.H1("4D TIC-TAC-TOE", style={'textAlign':'center','letterSpacing':'8px','color':'#ff69b4'}),
+    html.P("red cubes = X · blue spheres = O · size = W dimension",
            style={'textAlign':'center','color':'#666','fontSize':'0.8rem'}),
 
     # mode toggle
     html.Div(style={'textAlign':'center','marginBottom':'16px'}, children=[
-        html.Label('GAME MODE', style={'color':'#aaa','letterSpacing':'3px','fontSize':'0.75rem','display':'block','marginBottom':'8px'}),
+        html.Label('GAME MODE', style={'color':'#ff69b4','letterSpacing':'3px','fontSize':'0.75rem','display':'block','marginBottom':'8px'}),
         dcc.RadioItems(id='mode', options=[
             {'label':' 1 Player (vs Computer)','value':'1'},
             {'label':' 2 Players','value':'2'},
         ], value='1', inline=True,
         labelStyle={'marginRight':'24px','fontSize':'1rem','color':'#e0e0ff','cursor':'pointer'},
         inputStyle={'marginRight':'6px'},
-        style={'color':'#e0e0ff'}),
+        style={'color':'#ff69b4'}),
     ]),
 
     # main row: board + move log side by side
@@ -161,7 +162,7 @@ app.layout = html.Div(style={**S,'minHeight':'100vh','padding':'20px'}, children
     ]),
 
     html.Div(id='status', style={'textAlign':'center','fontSize':'1.2rem',
-                                  'fontWeight':'bold','color':'#ff6666','margin':'12px 0'}),
+                                  'fontWeight':'bold','color':'#ff69b4','margin':'12px 0'}),
 
     # input row
     html.Div(style={'display':'flex','justifyContent':'center','gap':'12px','alignItems':'center'}, children=[
@@ -169,7 +170,7 @@ app.layout = html.Div(style={**S,'minHeight':'100vh','padding':'20px'}, children
         dcc.Input(id='coord-input', type='text', placeholder='w z y x  (e.g. 0 1 2 1)',
                   style={**S,'border':'1px solid #444','padding':'10px','borderRadius':'6px','width':'220px'}),
         html.Button('SUBMIT',   id='submit-btn', n_clicks=0,
-                    style={'backgroundColor':'#3333aa','color':'white','border':'none',
+                    style={'backgroundColor':'#ff69b4','color':'white','border':'none',
                            'padding':'10px 24px','borderRadius':'6px','cursor':'pointer','letterSpacing':'2px'}),
         html.Button('NEW GAME', id='reset-btn',  n_clicks=0,
                     style={**S,'border':'1px solid #444','padding':'10px 20px','borderRadius':'6px','cursor':'pointer'}),
@@ -212,10 +213,10 @@ def handle_move(submit_clicks, reset_clicks, raw, mode, state):
         move = [int(p) for p in parts]
         assert all(0 <= v <= 2 for v in move)
     except:
-        return respond('Enter 4 numbers between 0 and 2  (e.g. 0 1 2 1)', clear=False)
+        return respond('⚠ Enter 4 numbers between 0 and 2  (e.g. 0 1 2 1)', clear=False)
 
     if move in past or move in xs or move in os:
-        return respond('That square is already taken!')
+        return respond('⚠ That square is already taken!')
 
     # apply move
     if turn == 'X':
@@ -228,7 +229,7 @@ def handle_move(submit_clicks, reset_clicks, raw, mode, state):
     if check_win(xs) or check_win(os):
         winner_name = 'Player X' if check_win(xs) else ('Player O' if mode=='2' else 'Computer')
         state = {'xs':xs,'os':os,'past':past,'turn':turn,'over':True}
-        return build_figure(xs, os), f' {winner_name} WINS!', '', '', state, build_move_log(xs, os)
+        return build_figure(xs, os), f'🎉 {winner_name} WINS!', '', '', state, build_move_log(xs, os)
 
     # computer move (1 player mode)
     if mode == '1' and turn == 'X':
@@ -238,7 +239,7 @@ def handle_move(submit_clicks, reset_clicks, raw, mode, state):
             past = past + [ai]
             if check_win(os):
                 state = {'xs':xs,'os':os,'past':past,'turn':'X','over':True}
-                return build_figure(xs, os), ' Computer WINS!', '', '', state, build_move_log(xs, os)
+                return build_figure(xs, os), '🤖 Computer WINS!', '', '', state, build_move_log(xs, os)
 
     # next turn
     next_turn = 'O' if (mode=='2' and turn=='X') else 'X'
