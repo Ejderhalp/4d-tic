@@ -261,7 +261,7 @@ def handle_move(submit_clicks, reset_clicks, raw, mode, state):
 
     # in 1 player mode, run the AI immediately after player X's move
     if mode == '1' and turn == 'X': #And boolean
-        ai = get_ai_move(xs, os)
+        ai = get_ai_move(xs, os) #returns best computer coordinate
         if ai:
             os   = os + [ai]
             past = past + [ai]
@@ -269,10 +269,11 @@ def handle_move(submit_clicks, reset_clicks, raw, mode, state):
                 state = {'xs':xs,'os':os,'past':past,'turn':'X','over':True}
                 return build_figure(xs, os), 'Computer WINS!', '', '', state, build_move_log(xs, os)
 
-    # 2 player mode - switch to the next player's turn
+    # 2 player mode - which turn comes next
+    ### no winner yet
     next_turn = 'O' if (mode=='2' and turn=='X') else 'X'
     state = {'xs':xs,'os':os,'past':past,'turn':next_turn,'over':False}
-    return build_figure(xs, os), '', f"Player {next_turn} — enter your move:", '', state, build_move_log(xs, os)
+    return build_figure(xs, os), '', f"Player {next_turn} — enter your move:", '', state, build_move_log(xs, os) 
 
 if __name__ == '__main__':
     app.run(debug=False)
