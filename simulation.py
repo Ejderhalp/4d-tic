@@ -199,7 +199,7 @@ app.layout = html.Div(style={**S,'minHeight':'100vh','padding':'20px'}, children
     dcc.Store(id='game-state', data={'xs':[],'os':[],'past':[],'turn':'X','over':False}),
 ])
 
-# callback
+# callback- connects buttons to python functions, input watches buttons and output has when they are clicked and update the page
 @app.callback(
     Output('board','figure'), Output('status','children'),
     Output('turn-label','children'), Output('coord-input','value'),
