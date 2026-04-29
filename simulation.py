@@ -184,6 +184,7 @@ app.layout = html.Div(style={**S,'minHeight':'100vh','padding':'20px'}, children
                                   'fontWeight':'bold','color':'#ff69b4','margin':'12px 0'}),
 
     # input row: turn label, coordinate box, submit and new game buttons
+    ###puts 
     html.Div(style={'display':'flex','justifyContent':'center','gap':'12px','alignItems':'center'}, children=[
         html.Div(id='turn-label', style={'color':'#aaa','whiteSpace':'nowrap'}),
         dcc.Input(id='coord-input', type='text', placeholder='w z y x  (e.g. 0 1 2 1)',
