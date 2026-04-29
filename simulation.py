@@ -210,8 +210,8 @@ app.layout = html.Div(style={**S,'minHeight':'100vh','padding':'20px'}, children
 )
 def handle_move(submit_clicks, reset_clicks, raw, mode, state):
     # fires every time submit or new game is clicked
-    triggered = callback_context.triggered[0]['prop_id']
-    xs, os, past, turn = state['xs'], state['os'], state['past'], state['turn']
+    triggered = callback_context.triggered[0]['prop_id'] #what button is clicked
+    xs, os, past, turn = state['xs'], state['os'], state['past'], state['turn'] #loads current information from stored
 
     def respond(status='', clear=True):
         # helper to return current board state unchanged with a status message
@@ -219,7 +219,7 @@ def handle_move(submit_clicks, reset_clicks, raw, mode, state):
         return build_figure(xs, os), status, label, ('' if clear else raw), state, build_move_log(xs, os)
 
     # reset everything back to empty
-    if 'reset-btn' in triggered:
+    if 'reset-btn' in triggered: #if new game button is clicked this clears everything
         state = {'xs':[],'os':[],'past':[],'turn':'X','over':False}
         return build_figure([],[]), '', 'Player X — enter your move:', '', state, build_move_log([],[])
 
@@ -228,17 +228,17 @@ def handle_move(submit_clicks, reset_clicks, raw, mode, state):
         return respond('Game over! Press NEW GAME to play again.', clear=False)
 
     # parse and validate the player's input
-    try:
+    try: #checks that input is good
         parts = raw.strip().split()
         assert len(parts) == 4 # must be exactly 4 numbers
         move = [int(p) for p in parts]
         assert all(0 <= v <= 2 for v in move) # each must be 0, 1, or 2
     except:
-        return respond('⚠ Enter 4 numbers between 0 and 2  (e.g. 0 1 2 1)', clear=False)
+        return respond('Enter 4 numbers between 0 and 2  (e.g. 0 1 2 1)', clear=False)
 
     # reject if square is already taken
     if move in past or move in xs or move in os:
-        return respond('⚠ That square is already taken!')
+        return respond('That square is already taken!')
 
     # apply the move to the correct player's list
     if turn == 'X':
