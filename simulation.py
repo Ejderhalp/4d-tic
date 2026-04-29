@@ -214,13 +214,15 @@ app.layout = html.Div(style={**S,'minHeight':'100vh','padding':'20px'}, children
 def handle_move(submit_clicks, reset_clicks, raw, mode, state):
     # fires every time submit or new game is clicked
     triggered = callback_context.triggered[0]['prop_id'] ###what button is clicked
-    xs, os, past, turn = state['xs'], state['os'], state['past'], state['turn'] ###loads current information from stored
+    xs, os, past, turn = state['xs'], state['os'], state['past'], state['turn'] ###loads current information from stored, seperated into 4 diff variables
 
+    ### there are lots of times we want to give a message back if there is an error on user end
     def respond(status='', clear=True):
         # helper to return current board state unchanged with a status message
         label = f"Player {state['turn']} — enter your move:"
         return build_figure(xs, os), status, label, ('' if clear else raw), state, build_move_log(xs, os)
 
+    ###first check
     # reset everything back to empty
     if 'reset-btn' in triggered: ###if new game button is clicked this clears everything
         state = {'xs':[],'os':[],'past':[],'turn':'X','over':False}
@@ -232,7 +234,7 @@ def handle_move(submit_clicks, reset_clicks, raw, mode, state):
 
     # parse and validate the player's input
     try: ###checks that input is good
-        parts = raw.strip().split()
+        parts = raw.strip().split() #takes what player input
         assert len(parts) == 4 # must be exactly 4 numbers
         move = [int(p) for p in parts]
         assert all(0 <= v <= 2 for v in move) # each must be 0, 1, or 2
