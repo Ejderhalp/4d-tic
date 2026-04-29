@@ -1,3 +1,13 @@
+### SETUP ###
+
+Libraries needed:
+numpy, itertools, plotly, math, dash
+
+Ideally play in the vs code web based ide as that's how we tested the files
+
+simulation_backup.py is the version without the dash library
+simulation.py is the version augmented to include the dash library
+
 ### README ###
 
 Welcome to 4d tic tac toe. I (Alp) came up with the idea for this game after hearing my friend mention that he had devised
