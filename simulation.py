@@ -111,6 +111,8 @@ def build_figure(xs, os):
 
 def build_move_log(xs, os):
     # builds the move history panel shown in the upper right
+    ###every time a move is made it gets called with the updated xs and os lists and rebuilds the panel from scratch
+    ### loops through every move in each player's list and displays it as a numbered coordinate
 
     def move_rows(moves, color, label):
         if not moves:
@@ -264,7 +266,7 @@ def handle_move(submit_clicks, reset_clicks, raw, mode, state):
                 state = {'xs':xs,'os':os,'past':past,'turn':'X','over':True}
                 return build_figure(xs, os), 'Computer WINS!', '', '', state, build_move_log(xs, os)
 
-    # switch to the next player's turn, if in 2 player mode
+    # 2 player mode - switch to the next player's turn
     next_turn = 'O' if (mode=='2' and turn=='X') else 'X'
     state = {'xs':xs,'os':os,'past':past,'turn':next_turn,'over':False}
     return build_figure(xs, os), '', f"Player {next_turn} — enter your move:", '', state, build_move_log(xs, os)

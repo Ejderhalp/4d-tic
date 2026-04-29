@@ -29,6 +29,7 @@ The game will detect a win when all of a certain player's moves have coordinates
 
 - GenAI assistance was used in writing the function that finds the best move for the AI.
 - GenAI assistance was also used in writing the visualise board function, alongside the documentation, to help us understand a new library (plotly)
+- GenAI assistance for Dash - combining the input and visualization
 
 
 
