@@ -25,21 +25,17 @@ def check_win(player_coords):
     return False
 
 def get_ai_move(xs, os):
-    # all empty spots
     available = [[w,z,y,x] for w in range(3) for z in range(3)
                             for y in range(3) for x in range(3)
                             if [w,z,y,x] not in xs and [w,z,y,x] not in os]
     if not available:
         return None
-    # 1. win if possible
     for spot in available:
         if check_win(os + [spot]):
             return spot
-    # 2. block player win
     for spot in available:
         if check_win(xs + [spot]):
             return spot
-    # 3. closest to player's cluster
     return min(available, key=lambda s: sum(
         math.sqrt(sum((s[i]-p[i])**2 for i in range(4))) for p in xs
     ))
@@ -86,7 +82,7 @@ def build_figure(xs, os):
     ))
 
     fig.update_layout(
-        paper_bgcolor='#0f0f1a', height=550,
+        paper_bgcolor='#0f0f1a', height=520,
         title=dict(text="4D Tic-Tac-Toe — size = W dimension", font=dict(color='white')),
         scene=dict(
             bgcolor='#0f0f1a',
@@ -99,11 +95,35 @@ def build_figure(xs, os):
     )
     return fig
 
+def build_move_log(xs, os):
+    # builds the move history panel content
+    def move_rows(moves, color, label):
+        if not moves:
+            return [html.P('No moves yet', style={'color':'#555','fontSize':'0.8rem','margin':'4px 0'})]
+        return [
+            html.P(f"{i+1}. [{m[0]} {m[1]} {m[2]} {m[3]}]",
+                   style={'color': color, 'margin':'3px 0', 'fontSize':'0.85rem'})
+            for i, m in enumerate(moves)
+        ]
+
+    return html.Div(children=[
+        # X moves
+        html.P("PLAYER X", style={'color':'#ff6666','letterSpacing':'2px',
+                                   'fontSize':'0.75rem','marginBottom':'6px','fontWeight':'bold'}),
+        *move_rows(xs, '#ff9999', 'X'),
+        html.Hr(style={'borderColor':'#333','margin':'10px 0'}),
+        # O moves
+        html.P("PLAYER O", style={'color':'#6699ff','letterSpacing':'2px',
+                                   'fontSize':'0.75rem','marginBottom':'6px','fontWeight':'bold'}),
+        *move_rows(os, '#99bbff', 'O'),
+    ])
+
 # ── layout ────────────────────────────────────────────────────────────────────
 
 S = {'backgroundColor':'#0f0f1a','color':'white','fontFamily':'"Courier New",monospace'}
 
 app.layout = html.Div(style={**S,'minHeight':'100vh','padding':'20px'}, children=[
+
     html.H1("4D TIC-TAC-TOE", style={'textAlign':'center','letterSpacing':'8px','color':'#e0e0ff'}),
     html.P("red cubes = X · blue spheres = O · size = W dimension",
            style={'textAlign':'center','color':'#666','fontSize':'0.8rem'}),
@@ -120,7 +140,26 @@ app.layout = html.Div(style={**S,'minHeight':'100vh','padding':'20px'}, children
         style={'color':'#e0e0ff'}),
     ]),
 
-    dcc.Graph(id='board', figure=build_figure([],[]), config={'displayModeBar':False}),
+    # main row: board + move log side by side
+    html.Div(style={'display':'flex','alignItems':'flex-start','gap':'16px'}, children=[
+
+        # board takes most of the space
+        html.Div(style={'flex':'1'}, children=[
+            dcc.Graph(id='board', figure=build_figure([],[]), config={'displayModeBar':False}),
+        ]),
+
+        # move log panel in the upper right
+        html.Div(id='move-log', style={
+            'width':'180px',
+            'backgroundColor':'#12121f',
+            'border':'1px solid #2a2a4a',
+            'borderRadius':'8px',
+            'padding':'14px',
+            'marginTop':'40px',
+            'minHeight':'200px',
+            'flexShrink':'0',
+        }, children=build_move_log([], [])),
+    ]),
 
     html.Div(id='status', style={'textAlign':'center','fontSize':'1.2rem',
                                   'fontWeight':'bold','color':'#ff6666','margin':'12px 0'}),
@@ -145,7 +184,7 @@ app.layout = html.Div(style={**S,'minHeight':'100vh','padding':'20px'}, children
 @app.callback(
     Output('board','figure'), Output('status','children'),
     Output('turn-label','children'), Output('coord-input','value'),
-    Output('game-state','data'),
+    Output('game-state','data'), Output('move-log','children'),
     Input('submit-btn','n_clicks'), Input('reset-btn','n_clicks'),
     State('coord-input','value'), State('mode','value'), State('game-state','data'),
     prevent_initial_call=True,
@@ -156,12 +195,12 @@ def handle_move(submit_clicks, reset_clicks, raw, mode, state):
 
     def respond(status='', clear=True):
         label = f"Player {state['turn']} — enter your move:"
-        return build_figure(xs, os), status, label, ('' if clear else raw), state
+        return build_figure(xs, os), status, label, ('' if clear else raw), state, build_move_log(xs, os)
 
     # reset
     if 'reset-btn' in triggered:
         state = {'xs':[],'os':[],'past':[],'turn':'X','over':False}
-        return build_figure([],[]), '', 'Player X — enter your move:', '', state
+        return build_figure([],[]), '', 'Player X — enter your move:', '', state, build_move_log([],[])
 
     # game already over
     if state['over']:
@@ -186,14 +225,13 @@ def handle_move(submit_clicks, reset_clicks, raw, mode, state):
         os = os + [move]
     past = past + [move]
 
-    # check win for whoever just moved
-    winner = check_win(xs) or check_win(os)
-    if winner:
+    # check win
+    if check_win(xs) or check_win(os):
         winner_name = 'Player X' if check_win(xs) else ('Player O' if mode=='2' else 'Computer')
         state = {'xs':xs,'os':os,'past':past,'turn':turn,'over':True}
-        return build_figure(xs, os), f'{winner_name} WINS!', '', '', state
+        return build_figure(xs, os), f' {winner_name} WINS!', '', '', state, build_move_log(xs, os)
 
-    # if 1 player and X just moved, computer goes now
+    # computer move (1 player mode)
     if mode == '1' and turn == 'X':
         ai = get_ai_move(xs, os)
         if ai:
@@ -201,12 +239,12 @@ def handle_move(submit_clicks, reset_clicks, raw, mode, state):
             past = past + [ai]
             if check_win(os):
                 state = {'xs':xs,'os':os,'past':past,'turn':'X','over':True}
-                return build_figure(xs, os), 'Computer WINS!', '', '', state
+                return build_figure(xs, os), ' Computer WINS!', '', '', state, build_move_log(xs, os)
 
     # next turn
     next_turn = 'O' if (mode=='2' and turn=='X') else 'X'
     state = {'xs':xs,'os':os,'past':past,'turn':next_turn,'over':False}
-    return build_figure(xs, os), '', f"Player {next_turn} — enter your move:", '', state
+    return build_figure(xs, os), '', f"Player {next_turn} — enter your move:", '', state, build_move_log(xs, os)
 
 if __name__ == '__main__':
     app.run(debug=False)
