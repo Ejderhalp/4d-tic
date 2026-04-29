@@ -246,6 +246,7 @@ def handle_move(submit_clicks, reset_clicks, raw, mode, state):
         return respond('That square is already taken!')
 
     ### apply the move to the correct player's list, updating and storing all moves
+    ###after checking move is valid
     if turn == 'X':
         xs = xs + [move]
     else:
@@ -253,13 +254,13 @@ def handle_move(submit_clicks, reset_clicks, raw, mode, state):
     past = past + [move]
 
     ### check if the player who just moved won
-    if check_win(xs) or check_win(os):
-        winner_name = 'Player X' if check_win(xs) else ('Player O' if mode=='2' else 'Computer')
-        state = {'xs':xs,'os':os,'past':past,'turn':turn,'over':True}
+    if check_win(xs) or check_win(os): ###goes through all combinations of 3 moves
+        winner_name = 'Player X' if check_win(xs) else ('Player O' if mode=='2' else 'Computer') #depending on mode
+        state = {'xs':xs,'os':os,'past':past,'turn':turn,'over':True} #over to True so no more moves
         return build_figure(xs, os), f'{winner_name} WINS!', '', '', state, build_move_log(xs, os)
 
     # in 1 player mode, run the AI immediately after player X's move
-    if mode == '1' and turn == 'X':
+    if mode == '1' and turn == 'X': #And boolean
         ai = get_ai_move(xs, os)
         if ai:
             os   = os + [ai]
