@@ -272,8 +272,9 @@ def handle_move(submit_clicks, reset_clicks, raw, mode, state):
     # 2 player mode - which turn comes next
     ### no winner yet
     next_turn = 'O' if (mode=='2' and turn=='X') else 'X'
-    state = {'xs':xs,'os':os,'past':past,'turn':next_turn,'over':False}
-    return build_figure(xs, os), '', f"Player {next_turn} — enter your move:", '', state, build_move_log(xs, os) 
+    state = {'xs':xs,'os':os,'past':past,'turn':next_turn,'over':False} #updated game state
+    return build_figure(xs, os), '', f"Player {next_turn} — enter your move:", '', state, build_move_log(xs, os) #returns all to the page and we see the upadate
+### all 6 things update when u hit submit
 
 if __name__ == '__main__':
     app.run(debug=False)
