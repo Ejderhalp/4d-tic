@@ -110,10 +110,14 @@ app.layout = html.Div(style={**S,'minHeight':'100vh','padding':'20px'}, children
 
     # mode toggle
     html.Div(style={'textAlign':'center','marginBottom':'16px'}, children=[
+        html.Label('GAME MODE', style={'color':'#aaa','letterSpacing':'3px','fontSize':'0.75rem','display':'block','marginBottom':'8px'}),
         dcc.RadioItems(id='mode', options=[
             {'label':' 1 Player (vs Computer)','value':'1'},
             {'label':' 2 Players','value':'2'},
-        ], value='1', inline=True, labelStyle={'marginRight':'20px'}, style={'color':'white'}),
+        ], value='1', inline=True,
+        labelStyle={'marginRight':'24px','fontSize':'1rem','color':'#e0e0ff','cursor':'pointer'},
+        inputStyle={'marginRight':'6px'},
+        style={'color':'#e0e0ff'}),
     ]),
 
     dcc.Graph(id='board', figure=build_figure([],[]), config={'displayModeBar':False}),
@@ -170,10 +174,10 @@ def handle_move(submit_clicks, reset_clicks, raw, mode, state):
         move = [int(p) for p in parts]
         assert all(0 <= v <= 2 for v in move)
     except:
-        return respond('⚠ Enter 4 numbers between 0 and 2  (e.g. 0 1 2 1)', clear=False)
+        return respond('Enter 4 numbers between 0 and 2  (e.g. 0 1 2 1)', clear=False)
 
     if move in past or move in xs or move in os:
-        return respond('⚠ That square is already taken!')
+        return respond('That square is already taken!')
 
     # apply move
     if turn == 'X':
@@ -187,7 +191,7 @@ def handle_move(submit_clicks, reset_clicks, raw, mode, state):
     if winner:
         winner_name = 'Player X' if check_win(xs) else ('Player O' if mode=='2' else 'Computer')
         state = {'xs':xs,'os':os,'past':past,'turn':turn,'over':True}
-        return build_figure(xs, os), f'🎉 {winner_name} WINS!', '', '', state
+        return build_figure(xs, os), f'{winner_name} WINS!', '', '', state
 
     # if 1 player and X just moved, computer goes now
     if mode == '1' and turn == 'X':
@@ -197,7 +201,7 @@ def handle_move(submit_clicks, reset_clicks, raw, mode, state):
             past = past + [ai]
             if check_win(os):
                 state = {'xs':xs,'os':os,'past':past,'turn':'X','over':True}
-                return build_figure(xs, os), '🤖 Computer WINS!', '', '', state
+                return build_figure(xs, os), 'Computer WINS!', '', '', state
 
     # next turn
     next_turn = 'O' if (mode=='2' and turn=='X') else 'X'
