@@ -83,7 +83,6 @@ def build_figure(xs, os):
 
     fig.update_layout(
         paper_bgcolor='#0f0f1a', height=520,
-        title=dict(text="4D Tic-Tac-Toe", font=dict(color='white')),
         scene=dict(
             bgcolor='#0f0f1a',
             xaxis=dict(title='X', range=[-0.5,2.5], color='white'),
