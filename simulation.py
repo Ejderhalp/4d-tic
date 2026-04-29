@@ -184,7 +184,7 @@ app.layout = html.Div(style={**S,'minHeight':'100vh','padding':'20px'}, children
                                   'fontWeight':'bold','color':'#ff69b4','margin':'12px 0'}),
 
     # input row: turn label, coordinate box, submit and new game buttons
-    ###puts 
+    ###puts both the grpah and the input in the app layout therfore same page makes them appear on same page
     html.Div(style={'display':'flex','justifyContent':'center','gap':'12px','alignItems':'center'}, children=[
         html.Div(id='turn-label', style={'color':'#aaa','whiteSpace':'nowrap'}),
         dcc.Input(id='coord-input', type='text', placeholder='w z y x  (e.g. 0 1 2 1)',
@@ -211,8 +211,8 @@ app.layout = html.Div(style={**S,'minHeight':'100vh','padding':'20px'}, children
 )
 def handle_move(submit_clicks, reset_clicks, raw, mode, state):
     # fires every time submit or new game is clicked
-    triggered = callback_context.triggered[0]['prop_id'] #what button is clicked
-    xs, os, past, turn = state['xs'], state['os'], state['past'], state['turn'] #loads current information from stored
+    triggered = callback_context.triggered[0]['prop_id'] ###what button is clicked
+    xs, os, past, turn = state['xs'], state['os'], state['past'], state['turn'] ###loads current information from stored
 
     def respond(status='', clear=True):
         # helper to return current board state unchanged with a status message
@@ -220,7 +220,7 @@ def handle_move(submit_clicks, reset_clicks, raw, mode, state):
         return build_figure(xs, os), status, label, ('' if clear else raw), state, build_move_log(xs, os)
 
     # reset everything back to empty
-    if 'reset-btn' in triggered: #if new game button is clicked this clears everything
+    if 'reset-btn' in triggered: ###if new game button is clicked this clears everything
         state = {'xs':[],'os':[],'past':[],'turn':'X','over':False}
         return build_figure([],[]), '', 'Player X — enter your move:', '', state, build_move_log([],[])
 
@@ -229,7 +229,7 @@ def handle_move(submit_clicks, reset_clicks, raw, mode, state):
         return respond('Game over! Press NEW GAME to play again.', clear=False)
 
     # parse and validate the player's input
-    try: #checks that input is good
+    try: ###checks that input is good
         parts = raw.strip().split()
         assert len(parts) == 4 # must be exactly 4 numbers
         move = [int(p) for p in parts]
@@ -237,18 +237,18 @@ def handle_move(submit_clicks, reset_clicks, raw, mode, state):
     except:
         return respond('Enter 4 numbers between 0 and 2  (e.g. 0 1 2 1)', clear=False)
 
-    # reject if square is already taken
+    ### reject if square is already taken
     if move in past or move in xs or move in os:
         return respond('That square is already taken!')
 
-    # apply the move to the correct player's list, updating and storing all moves
+    ### apply the move to the correct player's list, updating and storing all moves
     if turn == 'X':
         xs = xs + [move]
     else:
         os = os + [move]
     past = past + [move]
 
-    # check if the player who just moved won
+    ### check if the player who just moved won
     if check_win(xs) or check_win(os):
         winner_name = 'Player X' if check_win(xs) else ('Player O' if mode=='2' else 'Computer')
         state = {'xs':xs,'os':os,'past':past,'turn':turn,'over':True}
